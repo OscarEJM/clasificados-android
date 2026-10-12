@@ -1,0 +1,35 @@
+# ---------- Android Studio / IntelliJ ----------
+.idea/
+*.iml
+*.iws
+*.ipr
+captures/
+.externalNativeBuild/
+.cxx/
+
+# ---------- Gradle ----------
+.gradle/
+build/
+**/build/
+gradle-app.setting
+.kotlin/
+
+# ---------- Archivos locales y secretos (no subir) ----------
+local.properties
+google-services.json
+*.keystore
+*.jks
+keystore.properties
+.env
+
+# ---------- Archivos generados y de sistema ----------
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+*.log
+output.json
+.DS_Store
+Thumbs.db
+desktop.ini
