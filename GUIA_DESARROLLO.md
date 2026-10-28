@@ -64,7 +64,8 @@ Si se usan las dos herramientas, **una sola trabaja a la vez sobre el mismo mome
 ## 0.4 Commits y ramas
 
 - Rama principal: `main`. Por ser un proyecto individual se trabaja directo en `main`, salvo que Oscar indique lo contrario.
-- Formato del mensaje: `HU-XX: descripción corta en español`. Ejemplo: `HU-04: validación de campos del registro`.
+- Formato del mensaje (desde HU-02): `HU-XX · Nombre de la historia: descripción corta en español`. Ejemplo: `HU-04 · Registrarme: validación de campos del registro`. Los commits de HU-01 conservan el formato anterior (`HU-01: …`).
+- Cada historia terminada se sube a GitHub (commit y push a `main`).
 - Commits pequeños y frecuentes: al menos uno por momento terminado. El docente evalúa el aporte con el historial.
 - Oscar hace commit y push con **GitHub Desktop**. El agente le indica el mensaje exacto a usar.
 
