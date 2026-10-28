@@ -541,11 +541,11 @@ util/        Validador, formato de precios, RedDisponible
 - ¿Qué ícono de aplicación usamos? (si no hay, se deja el de Android por ahora y se pregunta después)
 
 **Criterios de aceptación** (todos deben cumplirse):
-- [ ] Dado se crea el proyecto en Android Studio, cuando se revisa su configuración, entonces el lenguaje es Kotlin y minSdk es 26 (Android 8.0).
-- [ ] Dado el proyecto está creado, cuando se revisa la estructura de carpetas, entonces existen paquetes separados para vistas (ui), ViewModels (viewmodel), datos (data/repository) y modelos (model).
-- [ ] Dado la aplicación se ejecuta en un emulador con muesca y navegación por gestos, cuando se abre cualquier pantalla, entonces ningún contenido queda debajo de la barra de estado ni de la barra de navegación.
-- [ ] Dado el tema está configurado, cuando se cambia el sistema entre claro y oscuro de forma manual en el código, entonces los colores corresponden a las variables «Tema claro» y «Tema oscuro» de Figma (principal #2563EB, Publicar #16A34A).
-- [ ] Dado existe el repositorio remoto, cuando se sube el proyecto base, entonces queda un commit con el proyecto inicial en la rama principal.
+- [x] Dado se crea el proyecto en Android Studio, cuando se revisa su configuración, entonces el lenguaje es Kotlin y minSdk es 26 (Android 8.0).
+- [x] Dado el proyecto está creado, cuando se revisa la estructura de carpetas, entonces existen paquetes separados para vistas (ui), ViewModels (viewmodel), datos (data/repository) y modelos (model).
+- [x] Dado la aplicación se ejecuta en un emulador con muesca y navegación por gestos, cuando se abre cualquier pantalla, entonces ningún contenido queda debajo de la barra de estado ni de la barra de navegación.
+- [x] Dado el tema está configurado, cuando se cambia el sistema entre claro y oscuro de forma manual en el código, entonces los colores corresponden a las variables «Tema claro» y «Tema oscuro» de Figma (principal #2563EB, Publicar #16A34A).
+- [x] Dado existe el repositorio remoto, cuando se sube el proyecto base, entonces queda un commit con el proyecto inicial en la rama principal.
 
 **Qué ve y hace el usuario:**
 - Esta historia no tiene una pantalla visible para el usuario final; deja lista la «carcasa» de la aplicación.
@@ -787,3 +787,4 @@ Dame el mensaje de commit, dime qué mover en ClickUp y registra el cierre en el
 | 28/10/2026 | M1 / HU-01 | Proyecto base `com.univalle.clasificados` (Kotlin, minSdk 26, compileSdk/targetSdk 37): paquetes ui, viewmodel, data/repository, model y util; tema claro/oscuro con los tokens de Figma; edge-to-edge con Scaffold; NavHost y barra inferior de 4 pestañas con pantallas marcador; ícono adaptativo vectorial a partir del logo; `FormatoPrecio`. Versiones: Gradle 9.8.2, AGP 9.5.0, Kotlin 2.4.21, Compose BOM 2026.09.00, Activity 1.13.0, Navigation 2.10.2, Lifecycle 2.11.0, Core KTX 1.19.1, JUnit 4.13.2 | `HU-01: proyecto base MVVM con tema claro/oscuro y navegación` | Compila sin errores. Pendiente: Oscar prueba los criterios en el emulador |
 | 28/10/2026 | M1 / HU-01 | AGP bajado de 9.5.0 a 9.4.0: Android Studio 2026.2.1 admite como máximo AGP 9.4.0. No aceptar el «AGP Upgrade Assistant» hasta actualizar Android Studio | `HU-01: AGP 9.4.0 compatible con Android Studio` | El proyecto sincroniza y se ejecuta desde Android Studio |
 | 28/10/2026 | M1 / HU-01 | Barra inferior ajustada al componente de Figma (pantalla 03): íconos de línea de Figma como vectores (`ic_inicio`, `ic_mas`, `ic_mis_anuncios`, `ic_ajustes`), Publicar en píldora verde, borde superior y pestañas de 64 dp. Se quitó la librería de íconos de Material | `HU-01: barra inferior según diseño de Figma` | Verificado en el emulador (tema claro) |
+| 28/10/2026 | M1 / HU-01 | **Cierre de M1:** Oscar probó en el emulador los 5 criterios de aceptación y todos pasan | `HU-01: cierre del momento M1` | ClickUp: HU-01 → *finalizado* con la Lista de control marcada |
