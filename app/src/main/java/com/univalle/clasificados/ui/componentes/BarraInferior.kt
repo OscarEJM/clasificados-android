@@ -6,28 +6,25 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ShortNavigationBar
+import androidx.compose.material3.ShortNavigationBarItem
+import androidx.compose.material3.ShortNavigationBarItemDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -53,71 +50,80 @@ private val pestanas = listOf(
 )
 
 /**
- * Barra inferior según el componente «Barra inferior» de Figma (pantalla 03):
- * borde superior, pestañas de 64 dp e indicador de 56 × 32 dp. «Publicar» siempre va en verde.
+ * Barra inferior según el componente «Barra inferior» de Figma (pantalla 03).
+ * Usa ShortNavigationBar de Material 3 (64 dp de alto, indicador de 56 × 32 dp) con borde superior.
+ * «Publicar» es un elemento propio porque en Figma su píldora verde se ve siempre.
  */
 @Composable
 fun BarraInferior(
     rutaActual: String?,
     alSeleccionar: (String) -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface)
-            .windowInsetsPadding(WindowInsets.navigationBars)
+    val colorBorde = ClasificadosTheme.colores.borde
+    ShortNavigationBar(
+        modifier = Modifier.drawWithContent {
+            drawContent()
+            drawLine(
+                color = colorBorde,
+                start = Offset(0f, 0f),
+                end = Offset(size.width, 0f),
+                strokeWidth = 1.dp.toPx()
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.surface
     ) {
-        HorizontalDivider(thickness = 1.dp, color = ClasificadosTheme.colores.borde)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp)
-                .selectableGroup()
-        ) {
-            pestanas.forEach { pestana ->
-                ElementoBarra(
+        pestanas.forEach { pestana ->
+            val seleccionada = rutaActual == pestana.ruta
+            if (pestana.ruta == Rutas.PUBLICAR) {
+                ElementoPublicar(
                     pestana = pestana,
-                    seleccionada = rutaActual == pestana.ruta,
-                    alTocar = { alSeleccionar(pestana.ruta) },
-                    modifier = Modifier.weight(1f)
+                    seleccionada = seleccionada,
+                    alTocar = { alSeleccionar(pestana.ruta) }
+                )
+            } else {
+                ShortNavigationBarItem(
+                    selected = seleccionada,
+                    onClick = { alSeleccionar(pestana.ruta) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(pestana.icono),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    },
+                    label = {
+                        Text(
+                            text = stringResource(pestana.etiqueta),
+                            fontSize = 12.sp,
+                            fontWeight = if (seleccionada) FontWeight.SemiBold else FontWeight.Medium,
+                            maxLines = 1
+                        )
+                    },
+                    colors = ShortNavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        selectedIndicatorColor = ClasificadosTheme.colores.primarioSuave,
+                        unselectedIconColor = ClasificadosTheme.colores.textoSecundario,
+                        unselectedTextColor = ClasificadosTheme.colores.textoSecundario
+                    )
                 )
             }
         }
     }
 }
 
+/** Pestaña «Publicar»: píldora verde de 56 × 32 dp con «+» blanco y texto en color de texto (Figma). */
 @Composable
-private fun ElementoBarra(
+private fun ElementoPublicar(
     pestana: Pestana,
     seleccionada: Boolean,
-    alTocar: () -> Unit,
-    modifier: Modifier = Modifier
+    alTocar: () -> Unit
 ) {
-    val esPublicar = pestana.ruta == Rutas.PUBLICAR
-    val colores = ClasificadosTheme.colores
-
-    val fondoIndicador = when {
-        esPublicar -> colores.publicar
-        seleccionada -> colores.primarioSuave
-        else -> Color.Transparent
-    }
-    val colorIcono = when {
-        esPublicar -> MaterialTheme.colorScheme.onPrimary
-        seleccionada -> MaterialTheme.colorScheme.primary
-        else -> colores.textoSecundario
-    }
-    val colorTexto = when {
-        esPublicar -> MaterialTheme.colorScheme.onSurface
-        seleccionada -> MaterialTheme.colorScheme.primary
-        else -> colores.textoSecundario
-    }
-    val pesoTexto = if (esPublicar || seleccionada) FontWeight.SemiBold else FontWeight.Medium
-
     Column(
-        modifier = modifier
-            .fillMaxHeight()
+        modifier = Modifier
+            .minimumInteractiveComponentSize()
             .selectable(selected = seleccionada, onClick = alTocar, role = Role.Tab)
-            .padding(top = 8.dp),
+            .padding(top = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -125,22 +131,23 @@ private fun ElementoBarra(
             modifier = Modifier
                 .size(width = 56.dp, height = 32.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(fondoIndicador),
+                .background(ClasificadosTheme.colores.publicar),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(pestana.icono),
                 contentDescription = null,
-                tint = colorIcono,
+                tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.size(24.dp)
             )
         }
         Spacer(Modifier.height(4.dp))
         Text(
             text = stringResource(pestana.etiqueta),
-            color = colorTexto,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.labelMedium,
             fontSize = 12.sp,
-            fontWeight = pesoTexto,
+            fontWeight = FontWeight.SemiBold,
             maxLines = 1
         )
     }
