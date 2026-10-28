@@ -35,6 +35,12 @@ import com.univalle.clasificados.R
 import com.univalle.clasificados.ui.navegacion.Rutas
 import com.univalle.clasificados.ui.theme.ClasificadosTheme
 
+/**
+ * Datos de una pestaña de la barra inferior.
+ * @property ruta ruta de navegación que abre la pestaña.
+ * @property etiqueta texto visible (recurso de strings.xml).
+ * @property icono ícono vectorial exportado de Figma.
+ */
 private data class Pestana(
     val ruta: String,
     @StringRes val etiqueta: Int,
