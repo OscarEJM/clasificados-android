@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Clasificados</string>
+
+    <!-- Barra inferior -->
+    <string name="pestana_inicio">Inicio</string>
+    <string name="pestana_publicar">Publicar</string>
+    <string name="pestana_mis_anuncios">Mis anuncios</string>
+    <string name="pestana_ajustes">Ajustes</string>
+</resources>
