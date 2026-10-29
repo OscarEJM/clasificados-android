@@ -11,8 +11,10 @@
     <string name="bienvenida_lema">Encuentra lo que buscas</string>
     <string name="bienvenida_cargando">Cargando…</string>
 
-    <!-- 01 · Inicio de sesión -->
-    <string name="inicio_sesion_titulo">Inicio de sesión</string>
+    <!-- 01 · Inicio de sesión (textos de Figma) -->
+    <string name="inicio_sesion_titulo">Inicia sesión</string>
+    <string name="inicio_sesion_subtitulo">Ingresa con tu correo y contraseña</string>
+    <string name="inicio_sesion_boton">Iniciar sesión</string>
     <string name="inicio_sesion_sin_cuenta">¿No tienes cuenta?</string>
     <string name="inicio_sesion_registrate">Regístrate</string>
 

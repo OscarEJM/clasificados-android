@@ -12,6 +12,7 @@ object Validador {
     const val CORREO_INVALIDO = "Ingresa un correo válido"
     const val CONTRASENA_CORTA = "La contraseña debe tener al menos 6 caracteres"
     const val CONTRASENAS_NO_COINCIDEN = "Las contraseñas no coinciden"
+    const val CONTRASENA_OBLIGATORIA = "La contraseña es obligatoria"
 
     /** Mínimo de caracteres de la contraseña (RN-03). */
     const val MINIMO_CONTRASENA = 6
@@ -30,6 +31,10 @@ object Validador {
     /** RF-04 (c): la contraseña tiene al menos [MINIMO_CONTRASENA] caracteres. */
     fun validarContrasena(contrasena: String): String? =
         if (contrasena.length >= MINIMO_CONTRASENA) null else CONTRASENA_CORTA
+
+    /** RF-07: en Inicio de sesión la contraseña no puede estar vacía (HU-05). */
+    fun validarContrasenaObligatoria(contrasena: String): String? =
+        if (contrasena.isEmpty()) CONTRASENA_OBLIGATORIA else null
 
     /** RF-04 (d): la confirmación es igual a la contraseña. */
     fun validarConfirmacion(contrasena: String, confirmacion: String): String? =

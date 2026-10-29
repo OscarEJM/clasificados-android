@@ -2,6 +2,8 @@ package com.univalle.clasificados.data.repository
 
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.univalle.clasificados.model.Usuario
@@ -24,6 +26,21 @@ enum class ResultadoRegistro {
     SIN_CONEXION,
 
     /** Cualquier otro fallo de Firebase. */
+    ERROR
+}
+
+/** Resultado de intentar iniciar sesión (HU-05). */
+enum class ResultadoInicioSesion {
+    /** Las credenciales son correctas: queda la sesión iniciada (RF-06). */
+    ENTRO,
+
+    /** Contraseña equivocada o correo inexistente; no se indica cuál de los dos (RF-07). */
+    CREDENCIALES_INCORRECTAS,
+
+    /** No hay internet (RN-18). */
+    SIN_CONEXION,
+
+    /** Cualquier otro fallo, por ejemplo demasiados intentos seguidos. */
     ERROR
 }
 
@@ -77,6 +94,26 @@ class AuthRepository(
             ResultadoRegistro.ERROR
         }
     }
+
+    /**
+     * Inicia sesión con correo y contraseña (RF-06). Con credenciales válidas Firebase deja la
+     * sesión iniciada y la navegación lleva a Inicio. Firebase responde el mismo error para
+     * contraseña equivocada y para correo inexistente, así que ambos dan
+     * [ResultadoInicioSesion.CREDENCIALES_INCORRECTAS] (RF-07).
+     */
+    suspend fun iniciarSesion(correo: String, contrasena: String): ResultadoInicioSesion =
+        try {
+            auth.signInWithEmailAndPassword(correo, contrasena).await()
+            ResultadoInicioSesion.ENTRO
+        } catch (e: FirebaseAuthInvalidCredentialsException) {
+            ResultadoInicioSesion.CREDENCIALES_INCORRECTAS
+        } catch (e: FirebaseAuthInvalidUserException) {
+            ResultadoInicioSesion.CREDENCIALES_INCORRECTAS
+        } catch (e: FirebaseNetworkException) {
+            ResultadoInicioSesion.SIN_CONEXION
+        } catch (e: Exception) {
+            ResultadoInicioSesion.ERROR
+        }
 
     companion object {
         /** Colección de perfiles de usuario en Firestore (sección 1.8). */

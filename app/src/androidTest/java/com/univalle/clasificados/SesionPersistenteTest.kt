@@ -1,8 +1,14 @@
 package com.univalle.clasificados
 
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -17,7 +23,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Pruebas de HU-03 · Bienvenida y sesión persistente. Se ejecutan en el emulador con internet:
+ * Pruebas de HU-03 · Bienvenida y sesión persistente y del criterio 1 de HU-05 · Iniciar sesión.
+ * Se ejecutan en el emulador con internet:
  * ./gradlew connectedDebugAndroidTest
  *
  * Las pruebas con sesión usan un usuario de prueba creado por Oscar en Firebase, cuyo correo y
@@ -45,7 +52,7 @@ class SesionPersistenteTest {
         iniciarSesionDePrueba()
         ActivityScenario.launch(MainActivity::class.java).use {
             esperarTexto("Mis anuncios")
-            compose.onNodeWithText("Inicio de sesión").assertDoesNotExist()
+            compose.onNodeWithText("Inicia sesión").assertDoesNotExist()
         }
     }
 
@@ -53,7 +60,7 @@ class SesionPersistenteTest {
     @Test
     fun sinSesion_llegaAInicioDeSesion() {
         ActivityScenario.launch(MainActivity::class.java).use {
-            esperarTexto("Inicio de sesión")
+            esperarTexto("Inicia sesión")
             compose.onNodeWithText("Mis anuncios").assertDoesNotExist()
         }
     }
@@ -65,8 +72,27 @@ class SesionPersistenteTest {
         ActivityScenario.launch(MainActivity::class.java).use {
             esperarTexto("Mis anuncios")
             auth.signOut()
-            esperarTexto("Inicio de sesión")
+            esperarTexto("Inicia sesión")
             compose.onNodeWithText("Mis anuncios").assertDoesNotExist()
+        }
+    }
+
+    /**
+     * HU-05, criterio 1: sin sesión, al escribir el correo y la contraseña correctos en la
+     * pantalla 01 y tocar «Iniciar sesión», la app llega a Inicio.
+     */
+    @Test
+    fun credencialesCorrectas_llevanAInicio() {
+        val correo = argumentos.getString("correoPrueba").orEmpty()
+        val contrasena = argumentos.getString("contrasenaPrueba").orEmpty()
+        assumeTrue("Falta PRUEBA_CORREO o PRUEBA_CONTRASENA en local.properties", correo.isNotBlank() && contrasena.isNotBlank())
+        ActivityScenario.launch(MainActivity::class.java).use {
+            esperarTexto("Inicia sesión")
+            compose.onAllNodes(hasSetTextAction())[0].performTextInput(correo)
+            compose.onAllNodes(hasSetTextAction())[1].performTextInput(contrasena)
+            compose.onNode(hasText("Iniciar sesión") and hasClickAction())
+                .performSemanticsAction(SemanticsActions.OnClick)
+            esperarTexto("Mis anuncios")
         }
     }
 
