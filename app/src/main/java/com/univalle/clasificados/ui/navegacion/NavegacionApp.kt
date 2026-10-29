@@ -27,6 +27,7 @@ import com.univalle.clasificados.ui.pantallas.InicioScreen
 import com.univalle.clasificados.ui.pantallas.InicioSesionScreen
 import com.univalle.clasificados.ui.pantallas.MisAnunciosScreen
 import com.univalle.clasificados.ui.pantallas.PublicarScreen
+import com.univalle.clasificados.ui.pantallas.RegistroScreen
 import com.univalle.clasificados.viewmodel.EstadoSesion
 import com.univalle.clasificados.viewmodel.SesionViewModel
 
@@ -89,7 +90,14 @@ fun NavegacionApp(sesionViewModel: SesionViewModel = viewModel()) {
                 BienvenidaScreen()
             }
             composable(Rutas.INICIO_SESION) {
-                Box(Modifier.padding(innerPadding)) { InicioSesionScreen() }
+                Box(Modifier.padding(innerPadding)) {
+                    InicioSesionScreen(alRegistrarse = { navController.navigate(Rutas.REGISTRO) })
+                }
+            }
+            composable(Rutas.REGISTRO) {
+                Box(Modifier.padding(innerPadding)) {
+                    RegistroScreen(alVolver = { navController.popBackStack() })
+                }
             }
             composable(Rutas.INICIO) { Box(Modifier.padding(innerPadding)) { InicioScreen() } }
             composable(Rutas.PUBLICAR) { Box(Modifier.padding(innerPadding)) { PublicarScreen() } }
@@ -100,8 +108,11 @@ fun NavegacionApp(sesionViewModel: SesionViewModel = viewModel()) {
 }
 
 /**
- * Decide a dónde mover al usuario según la sesión (RF-01, RF-02 y RF-09).
- * Al salir de la bienvenida, o al sacar a alguien sin sesión, se limpia la pila de navegación.
+ * Decide a dónde mover al usuario según la sesión (RF-01, RF-02, RF-09 y RN-04).
+ * - Desde la bienvenida: a Inicio si hay sesión, si no a Inicio de sesión.
+ * - Sin sesión en una pantalla privada: a Inicio de sesión.
+ * - Con sesión en Inicio de sesión o Registro (acaba de entrar o de crear su cuenta): a Inicio.
+ * En todos los casos se limpia la pila de navegación para que «atrás» no regrese.
  */
 private fun aplicarReglasDeSesion(
     navController: NavHostController,
@@ -113,6 +124,8 @@ private fun aplicarReglasDeSesion(
         rutaActual == Rutas.BIENVENIDA ->
             if (estado == EstadoSesion.CON_SESION) Rutas.INICIO else Rutas.INICIO_SESION
         estado == EstadoSesion.SIN_SESION && rutaActual !in Rutas.PUBLICAS -> Rutas.INICIO_SESION
+        estado == EstadoSesion.CON_SESION &&
+            (rutaActual == Rutas.INICIO_SESION || rutaActual == Rutas.REGISTRO) -> Rutas.INICIO
         else -> return
     }
     navController.navigate(destino) {

@@ -10,7 +10,7 @@ object Rutas {
     const val MIS_ANUNCIOS = "mis_anuncios"
     const val AJUSTES = "ajustes"
 
-    /** Pantallas que se pueden ver sin sesión: 00, 01 y 02 (RF-09). Registro llega en HU-04. */
+    /** Pantallas que se pueden ver sin sesión: 00, 01 y 02 (RF-09). */
     val PUBLICAS = setOf(BIENVENIDA, INICIO_SESION, REGISTRO)
 
     /** Pantallas que muestran la barra inferior y el botón «Publicar». */

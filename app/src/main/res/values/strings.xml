@@ -13,4 +13,26 @@
 
     <!-- 01 · Inicio de sesión -->
     <string name="inicio_sesion_titulo">Inicio de sesión</string>
+    <string name="inicio_sesion_sin_cuenta">¿No tienes cuenta?</string>
+    <string name="inicio_sesion_registrate">Regístrate</string>
+
+    <!-- 02 · Registro (textos de Figma) -->
+    <string name="registro_titulo">Crear cuenta</string>
+    <string name="registro_subtitulo">Completa tus datos para publicar anuncios</string>
+    <string name="registro_nombre">Nombre completo</string>
+    <string name="registro_nombre_ejemplo">Ej: Ana Gómez</string>
+    <string name="registro_correo">Correo electrónico</string>
+    <string name="registro_correo_ejemplo">tu@email.com</string>
+    <string name="registro_telefono">Teléfono</string>
+    <string name="registro_telefono_ejemplo">(+57) 300 123 4567</string>
+    <string name="registro_contrasena">Contraseña</string>
+    <string name="registro_confirmacion">Confirmar contraseña</string>
+    <string name="registro_contrasena_ejemplo">••••••••</string>
+    <string name="registro_ayuda_contrasena">Mínimo 6 caracteres</string>
+    <string name="registro_crear_cuenta">Crear cuenta</string>
+    <string name="registro_ya_tienes_cuenta">¿Ya tienes cuenta?</string>
+    <string name="registro_inicia_sesion">Inicia sesión</string>
+    <string name="accion_volver">Volver</string>
+    <string name="accion_mostrar_contrasena">Mostrar contraseña</string>
+    <string name="accion_ocultar_contrasena">Ocultar contraseña</string>
 </resources>
