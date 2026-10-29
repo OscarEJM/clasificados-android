@@ -6,4 +6,11 @@
     <string name="pestana_publicar">Publicar</string>
     <string name="pestana_mis_anuncios">Mis anuncios</string>
     <string name="pestana_ajustes">Ajustes</string>
+
+    <!-- 00 · Bienvenida -->
+    <string name="bienvenida_lema">Encuentra lo que buscas</string>
+    <string name="bienvenida_cargando">Cargando…</string>
+
+    <!-- 01 · Inicio de sesión -->
+    <string name="inicio_sesion_titulo">Inicio de sesión</string>
 </resources>

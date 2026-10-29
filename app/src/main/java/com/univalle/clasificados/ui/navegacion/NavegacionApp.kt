@@ -7,11 +7,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -19,26 +22,41 @@ import androidx.navigation.compose.rememberNavController
 import com.univalle.clasificados.ui.componentes.BarraInferior
 import com.univalle.clasificados.ui.componentes.BotonPublicar
 import com.univalle.clasificados.ui.pantallas.AjustesScreen
+import com.univalle.clasificados.ui.pantallas.BienvenidaScreen
 import com.univalle.clasificados.ui.pantallas.InicioScreen
+import com.univalle.clasificados.ui.pantallas.InicioSesionScreen
 import com.univalle.clasificados.ui.pantallas.MisAnunciosScreen
 import com.univalle.clasificados.ui.pantallas.PublicarScreen
+import com.univalle.clasificados.viewmodel.EstadoSesion
+import com.univalle.clasificados.viewmodel.SesionViewModel
 
 /**
- * Carcasa de la aplicación: Scaffold con barra inferior de tres pestañas, botón flotante
- * «Publicar» centrado y NavHost. El innerPadding del Scaffold incluye la barra y las barras del
- * sistema, así el contenido respeta el área segura. El botón flota sobre el contenido; las listas
- * con scroll dejan EspacioBotonPublicar al final para que no tape el último elemento.
+ * Carcasa de la aplicación: Scaffold, NavHost y reglas de sesión (HU-03).
+ * - Arranca en la pantalla 00 · Bienvenida. Cuando [SesionViewModel] termina de revisar la
+ *   sesión, va a Inicio (hay sesión, RF-02) o a Inicio de sesión (no hay, RF-02) y quita la
+ *   bienvenida de la pila para que «atrás» no vuelva a ella.
+ * - Protege las rutas (RF-09): si no hay sesión y la pantalla no es pública, lleva a Inicio de sesión.
+ * - La barra inferior y el botón flotante «Publicar» solo se ven en las pantallas privadas.
+ *   El botón flota sobre el contenido; las listas con scroll dejan EspacioBotonPublicar al final.
+ *
+ * @param sesionViewModel estado de la sesión, compartido por toda la app.
  */
 @Composable
-fun NavegacionApp() {
+fun NavegacionApp(sesionViewModel: SesionViewModel = viewModel()) {
     val navController = rememberNavController()
     val entradaActual by navController.currentBackStackEntryAsState()
     val rutaActual = entradaActual?.destination?.route
+    val estadoSesion by sesionViewModel.estado.collectAsStateWithLifecycle()
+    val conBarra = rutaActual in Rutas.CON_BARRA
+
+    LaunchedEffect(estadoSesion, rutaActual) {
+        aplicarReglasDeSesion(navController, estadoSesion, rutaActual)
+    }
 
     // Navega a una pestaña sin apilar pantallas repetidas y conservando el estado de cada una.
     val irA: (String) -> Unit = { ruta ->
         navController.navigate(ruta) {
-            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+            popUpTo(Rutas.INICIO) { saveState = true }
             launchSingleTop = true
             restoreState = true
         }
@@ -48,25 +66,57 @@ fun NavegacionApp() {
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
-            BarraInferior(rutaActual = rutaActual, alSeleccionar = irA)
+            if (conBarra) BarraInferior(rutaActual = rutaActual, alSeleccionar = irA)
         },
         floatingActionButton = {
-            // El Scaffold deja 16 dp sobre la barra; se baja 9 dp para quedar a 7 dp como en Figma.
-            Box(Modifier.offset(y = 9.dp)) {
-                BotonPublicar(alTocar = { irA(Rutas.PUBLICAR) })
+            if (conBarra) {
+                // El Scaffold deja 16 dp sobre la barra; se baja 9 dp para quedar a 7 dp como en Figma.
+                Box(Modifier.offset(y = 9.dp)) {
+                    BotonPublicar(alTocar = { irA(Rutas.PUBLICAR) })
+                }
             }
         },
         floatingActionButtonPosition = FabPosition.Center
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Rutas.INICIO,
-            modifier = Modifier.padding(innerPadding)
+            startDestination = Rutas.BIENVENIDA
         ) {
-            composable(Rutas.INICIO) { InicioScreen() }
-            composable(Rutas.PUBLICAR) { PublicarScreen() }
-            composable(Rutas.MIS_ANUNCIOS) { MisAnunciosScreen() }
-            composable(Rutas.AJUSTES) { AjustesScreen() }
+            // La bienvenida ocupa toda la pantalla (su fondo va detrás de la barra de estado).
+            composable(Rutas.BIENVENIDA) {
+                // El segundo mínimo cuenta desde que la 00 aparece, no desde que abre la app.
+                LaunchedEffect(Unit) { sesionViewModel.contarTiempoBienvenida() }
+                BienvenidaScreen()
+            }
+            composable(Rutas.INICIO_SESION) {
+                Box(Modifier.padding(innerPadding)) { InicioSesionScreen() }
+            }
+            composable(Rutas.INICIO) { Box(Modifier.padding(innerPadding)) { InicioScreen() } }
+            composable(Rutas.PUBLICAR) { Box(Modifier.padding(innerPadding)) { PublicarScreen() } }
+            composable(Rutas.MIS_ANUNCIOS) { Box(Modifier.padding(innerPadding)) { MisAnunciosScreen() } }
+            composable(Rutas.AJUSTES) { Box(Modifier.padding(innerPadding)) { AjustesScreen() } }
         }
+    }
+}
+
+/**
+ * Decide a dónde mover al usuario según la sesión (RF-01, RF-02 y RF-09).
+ * Al salir de la bienvenida, o al sacar a alguien sin sesión, se limpia la pila de navegación.
+ */
+private fun aplicarReglasDeSesion(
+    navController: NavHostController,
+    estado: EstadoSesion,
+    rutaActual: String?
+) {
+    if (estado == EstadoSesion.VERIFICANDO || rutaActual == null) return
+    val destino = when {
+        rutaActual == Rutas.BIENVENIDA ->
+            if (estado == EstadoSesion.CON_SESION) Rutas.INICIO else Rutas.INICIO_SESION
+        estado == EstadoSesion.SIN_SESION && rutaActual !in Rutas.PUBLICAS -> Rutas.INICIO_SESION
+        else -> return
+    }
+    navController.navigate(destino) {
+        popUpTo(navController.graph.id) { inclusive = true }
+        launchSingleTop = true
     }
 }
