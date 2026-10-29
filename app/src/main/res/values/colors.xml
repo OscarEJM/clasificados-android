@@ -3,4 +3,14 @@
     <color name="primario">#FF2563EB</color>
     <color name="blanco">#FFFFFFFF</color>
     <color name="fondo">#FFF9FAFB</color>
+
+    <!-- Arranque · pantalla 00 · Bienvenida de Figma, tema claro -->
+    <color name="arranque_claro_fondo">#FF2563EB</color>
+    <color name="arranque_claro_cuadro">#FFFFFFFF</color>
+    <color name="arranque_claro_icono">#FF2563EB</color>
+
+    <!-- Arranque · pantalla 00 · Bienvenida de Figma, tema oscuro -->
+    <color name="arranque_oscuro_fondo">#FF3B82F6</color>
+    <color name="arranque_oscuro_cuadro">#FF161B26</color>
+    <color name="arranque_oscuro_icono">#FF3B82F6</color>
 </resources>

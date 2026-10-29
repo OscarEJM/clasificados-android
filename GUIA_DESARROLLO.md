@@ -10,7 +10,7 @@
 | **Responsable** | Oscar Eduardo Jimenez Morales (2264419-2724) – único integrante |
 | **Docente** | Miguel Ángel Askar Rodríguez |
 | **Repositorio** | github.com/OscarEJM/clasificados-android (público) |
-| **Versión de esta guía** | 1.0 – 28 de octubre de 2026 |
+| **Versión de esta guía** | 1.1 – 28 de octubre de 2026 |
 
 ---
 
@@ -65,9 +65,8 @@ Si se usan las dos herramientas, **una sola trabaja a la vez sobre el mismo mome
 
 - Rama principal: `main`. Por ser un proyecto individual se trabaja directo en `main`, salvo que Oscar indique lo contrario.
 - Formato del mensaje (desde HU-02): `HU-XX · Nombre de la historia: descripción corta en español`. Ejemplo: `HU-04 · Registrarme: validación de campos del registro`. Los commits de HU-01 conservan el formato anterior (`HU-01: …`).
-- Cada historia terminada se sube a GitHub (commit y push a `main`).
-- Commits pequeños y frecuentes: al menos uno por momento terminado. El docente evalúa el aporte con el historial.
-- Oscar hace commit y push con **GitHub Desktop**. El agente le indica el mensaje exacto a usar.
+- Se sube a GitHub **solo cuando la historia está completa**: un único commit y push a `main` por historia, no uno por cada cambio intermedio. El docente evalúa el aporte con el historial.
+- **El agente hace el commit y el push** con git, usando el mensaje en el formato anterior. Antes revisa que no vaya ningún secreto (RN-20) y al terminar le dice a Oscar qué subió.
 
 ## 0.5 Trazabilidad (ClickUp, documentos y Figma)
 
@@ -81,6 +80,17 @@ Si se usan las dos herramientas, **una sola trabaja a la vez sobre el mismo mome
   - `PENDIENTES_FIGMA.md` – ajustes de diseño pendientes.
 - Si una decisión cambia un requisito o una historia, el agente **no la aplica en silencio**: avisa a Oscar qué documento hay que actualizar (nueva versión en su *Control de versiones*) y qué tarea de ClickUp cambia.
 - **Figma:** archivo «Clasificados – Diseño Móvil», páginas *Modo claro* y *Modo oscuro*. Las pantallas se identifican por número (00 a 16).
+
+## 0.6 Reglas acordadas durante el desarrollo
+
+1. **Prioridad:** si una instrucción del chat contradice esta guía, manda la guía y el agente avisa a Oscar antes de seguir.
+2. **Documentación del código:** toda clase, objeto, ViewModel, pantalla, repositorio y función pública lleva un comentario KDoc (`/** … */`) en español que explica qué hace, para qué sirve y qué historia o requisito cumple (por ejemplo «RNF-06», «HU-02»). También las pruebas.
+3. **Figma manda en lo visual:** antes de construir o cambiar una pantalla se revisa su diseño en Figma (medidas, íconos, colores, textos). Los íconos se toman de Figma. Si la explicación técnica de una historia choca con Figma, se avisa a Oscar y se busca un componente que cumpla ambas.
+4. **Consultas a Figma:** el plan de Figma de Oscar tiene pocas consultas al mes. El agente pide permiso antes de consultar Figma y usa máximo 1 o 2 consultas por tarea.
+5. **Nombres claros:** con Oscar se habla con el código y nombre de la historia («HU-03 · Bienvenida y sesión persistente»), no con los códigos de momento (M1, M2…).
+6. **Sin códigos crípticos:** no se muestran a Oscar identificadores técnicos (huellas de commit como «c2c1844», ids internos). Un commit se nombra por su mensaje; si un id es imprescindible, se explica qué es.
+7. **Solo el proyecto Clasificados:** en Firebase y Supabase el agente trabaja únicamente en los proyectos de Clasificados. No abre, cambia ni borra otros proyectos o bases de datos de Oscar.
+8. **Acciones que hace Oscar:** iniciar sesión, crear cuentas, escribir contraseñas, aceptar términos y borrar datos. El agente lo guía paso a paso y espera su confirmación.
 
 ---
 
@@ -442,8 +452,9 @@ Usar **exactamente** estos textos. No cambiarlos sin autorización.
   - 00 Bienvenida · 01 Inicio de sesión · 02 Registro · 03 Inicio · 04 Todas las categorías
   - 05 Anuncios de categoría · 06 Filtros · 07 Detalle · 08–11 Publicar (pasos 1 a 4, 09b con errores)
   - 12 Confirmación · 13 Mis anuncios · 14 Editar · 15 Diálogo eliminar · 16 Ajustes
+  - Estados: 03b Resultados de búsqueda · 05b Sin resultados · 05c Sin conexión · 06b Filtros con error · 10b Paso 3 con error · 11b Publicando (progreso) · 13b Mis anuncios vacío · 14b Editar paso 4 «Guardar cambios»
 - **Estilo:** minimalista móvil. Tarjetas dos por renglón, **sin descripción** en las tarjetas de categoría.
-- **Barra inferior:** 4 pestañas en este orden: Inicio, **Publicar** (botón verde), Mis anuncios, Ajustes.
+- **Barra inferior (cambio aprobado el 28/10/2026):** 3 pestañas del mismo ancho: Inicio, Mis anuncios, Ajustes. Encima, el botón circular verde **«Publicar»** (círculo de 60 dp color `publicar`, aro de 5 dp color `superficie`, sombra verde suave, ícono + blanco de 28 dp y el texto «Publicar» debajo en 12 sp negrita color `texto`) sobresale de la barra, centrado sobre «Mis anuncios». Todo contenido desplazable deja 96 dp libres **solo al final** (constante `EspacioBotonPublicar`), para que el botón no tape el último elemento; arriba la pantalla usa todo el alto y el botón flota sobre el contenido (como 05c). Las pantallas sin scroll no reservan ese espacio. Ver componente «Barra inferior» y pantalla 03 en Figma.
 - **Área segura:** nada debajo de la barra de estado ni de la barra de navegación.
 - **Tokens de color:**
 
@@ -462,7 +473,7 @@ Usar **exactamente** estos textos. No cambiarlos sin autorización.
 | error | #DC2626 | #F87171 |
 | exito | #16A34A | #4ADE80 |
 
-- **Pendientes de diseño:** ver `PENDIENTES_FIGMA.md` (resultados de búsqueda, estados vacíos, errores, sin conexión, indicador de progreso). Si una historia necesita una pantalla pendiente, el agente propone el diseño **siguiendo los tokens anteriores** y pide aprobación a Oscar.
+- **Pendientes de diseño:** ninguno obligatorio; todos los estados ya están en Figma (ver la lista de estados arriba). Solo quedan opcionales las pantallas de error de Inicio de sesión y Registro: si se necesitan, el agente usa los mensajes de la sección 1.5 y los tokens anteriores, y pide aprobación a Oscar.
 
 ## 1.10 Arquitectura y tecnologías (decisiones cerradas)
 
@@ -495,13 +506,16 @@ util/        Validador, formato de precios, RedDisponible
 - Las pantallas no llaman a Firebase directamente; siempre pasan por ViewModel y Repository.
 - Versiones de librerías: usar las estables más recientes compatibles. El agente informa a Oscar qué versiones agregó.
 
-## 1.11 Datos que aún NO están definidos (preguntar antes de usar)
+## 1.11 Datos que antes no estaban definidos (ya definidos)
 
-| Dato | Cuándo se necesita |
-|---|---|
-| Nombre del paquete / applicationId (por ejemplo `com.?.clasificados`) | M1 – HU-01 |
-| Ícono de la aplicación (launcher) | M1 – HU-01 |
-| Nombre exacto del proyecto en Firebase y en Supabase | M2 – HU-02 |
+| Dato | Valor definido | Historia |
+|---|---|---|
+| Nombre del paquete / applicationId | `com.univalle.clasificados` | HU-01 |
+| Ícono de la aplicación (launcher) | Logo de la pantalla 00 (cuadro blanco con cuadrícula azul sobre fondo azul), como ícono adaptativo vectorial | HU-01 |
+| Proyecto en Firebase | `clasificados` (plan Spark, dentro de la organización correounivalle.edu.co) | HU-02 |
+| Proyecto en Supabase | `clasificados` (plan Free, São Paulo, en la organización «Clasificados» de la segunda cuenta de GitHub de Oscar) | HU-02 |
+
+Si aparece otro dato sin definir, se agrega aquí y se pregunta a Oscar antes de usarlo.
 
 ---
 
@@ -524,10 +538,10 @@ util/        Validador, formato de precios, RedDisponible
 
 - [x] Android Studio instalado y emulador funcionando.
 - [x] Repositorio `clasificados-android` publicado en GitHub, ubicado en `PROYECTO CLASIFICADOS/SOFTWARE/clasificados-android` y abierto en GitHub Desktop.
-- [ ] Este archivo guardado en la raíz del repositorio como `GUIA_DESARROLLO.md`, junto con `CLAUDE.md` y `AGENTS.md` que apuntan a él.
-- [ ] Cuenta de Google lista para crear el proyecto de Firebase (se usa en M2).
-- [ ] Cuenta de Supabase lista (se usa en M2).
-- [ ] Commit: `Docs: guía de desarrollo para agentes`.
+- [x] Este archivo guardado en la raíz del repositorio como `GUIA_DESARROLLO.md`, junto con `CLAUDE.md` y `AGENTS.md` que apuntan a él.
+- [x] Cuenta de Google lista para crear el proyecto de Firebase (se usa en M2).
+- [x] Cuenta de Supabase lista (se usa en M2).
+- [x] Commit: `Docs: guía de desarrollo para agentes`.
 
 ## M1 – HU-01 · Proyecto base con arquitectura MVVM y tema visual (10 h)
 
@@ -550,7 +564,7 @@ util/        Validador, formato de precios, RedDisponible
 
 **Qué ve y hace el usuario:**
 - Esta historia no tiene una pantalla visible para el usuario final; deja lista la «carcasa» de la aplicación.
-- Al abrir la aplicación se ve una pantalla vacía con los colores del diseño, la barra de estado respetada y la barra inferior con las cuatro pestañas (Inicio, Publicar, Mis anuncios, Ajustes), aún sin contenido.
+- Al abrir la aplicación se ve una pantalla vacía con los colores del diseño, la barra de estado respetada y la barra inferior con tres pestañas (Inicio, Mis anuncios, Ajustes) y el botón circular verde «Publicar» que sobresale encima de la barra, centrado sobre «Mis anuncios»; aún sin contenido.
 - Todos los textos fijos de la aplicación quedan en español desde el inicio.
 
 **Cómo construirlo:**
@@ -558,7 +572,7 @@ util/        Validador, formato de precios, RedDisponible
 2. Organizar paquetes: model (clases de datos), data/repository (acceso a Firebase y Supabase), viewmodel (un ViewModel por pantalla que expone su estado con StateFlow), ui (funciones @Composable de pantallas y componentes reutilizables). Las pantallas leen el estado con collectAsStateWithLifecycle().
 3. Definir en ui/theme (Color.kt y Theme.kt) dos ColorScheme de Material 3, claro y oscuro, con los valores de las variables de Figma (primario, primario-suave, publicar, fondo, superficie, texto, texto-secundario, borde, error, éxito), y la función ClasificadosTheme(darkTheme) que los aplica.
 4. Llamar a enableEdgeToEdge() en MainActivity y usar Scaffold, aplicando su innerPadding (WindowInsets de las barras del sistema) al contenido de cada pantalla para respetar el área segura.
-5. Crear la navegación con Navigation Compose (NavHost y rutas por pantalla) y la barra inferior con NavigationBar de cuatro pestañas, con pantallas vacías de marcador.
+5. Crear la navegación con Navigation Compose (NavHost y rutas por pantalla) y la barra inferior con tres pestañas (Inicio, Mis anuncios, Ajustes) y, encima y centrado, el botón circular «Publicar» (ver 1.9); el contenido con scroll deja 96 dp libres al final (ver 1.9). Pantallas vacías de marcador.
 6. Crear una utilidad de formato de precios en pesos colombianos (Locale "es", "CO") con punto como separador de miles.
 7. Garantizar zonas táctiles de al menos 48 × 48 dp en botones e íconos (los componentes de Material 3 lo cumplen; en íconos propios usar Modifier.minimumInteractiveComponentSize()).
 8. Hacer commit y push del proyecto base al repositorio remoto.
@@ -578,11 +592,11 @@ util/        Validador, formato de precios, RedDisponible
 - Confirmar que el bucket se llamará `anuncios-fotos`.
 
 **Criterios de aceptación** (todos deben cumplirse):
-- [ ] Dado el proyecto de Firebase está creado en plan Spark, cuando se revisa la consola, entonces están habilitados Authentication (correo/contraseña) y Firestore, sin facturación activa.
-- [ ] Dado el proyecto de Supabase está creado en plan Free, cuando se revisa la consola, entonces existe un bucket para las fotos de los anuncios.
-- [ ] Dado la aplicación está conectada, cuando se escribe un documento de prueba en Firestore desde la app, entonces el documento aparece en la consola de Firestore.
-- [ ] Dado la aplicación está conectada, cuando se sube una imagen de prueba a Supabase Storage desde la app, entonces la imagen aparece en el bucket.
-- [ ] Dado Firestore está configurado, cuando se revisa el código de inicialización, entonces la caché local de Firestore está configurada solo en memoria, para no guardar anuncios en el dispositivo (RNF-06).
+- [x] Dado el proyecto de Firebase está creado en plan Spark, cuando se revisa la consola, entonces están habilitados Authentication (correo/contraseña) y Firestore, sin facturación activa.
+- [x] Dado el proyecto de Supabase está creado en plan Free, cuando se revisa la consola, entonces existe un bucket para las fotos de los anuncios.
+- [x] Dado la aplicación está conectada, cuando se escribe un documento de prueba en Firestore desde la app, entonces el documento aparece en la consola de Firestore.
+- [x] Dado la aplicación está conectada, cuando se sube una imagen de prueba a Supabase Storage desde la app, entonces la imagen aparece en el bucket.
+- [x] Dado Firestore está configurado, cuando se revisa el código de inicialización, entonces la caché local de Firestore está configurada solo en memoria, para no guardar anuncios en el dispositivo (RNF-06).
 
 **Qué ve y hace el usuario:**
 - Historia técnica sin pantalla nueva. Al terminarla, la aplicación ya puede comunicarse con la nube aunque todavía no haya pantallas que lo usen.
@@ -776,7 +790,7 @@ Dame el mensaje de commit, dime qué mover en ClickUp y registra el cierre en el
 - [ ] Corresponde a la pantalla de Figma.
 - [ ] Textos iguales a la sección 1.5.
 - [ ] Compila sin errores.
-- [ ] Commit y push con el formato `HU-XX: …`.
+- [ ] Commit y push con el formato `HU-XX · Nombre de la historia: …` (ver 0.4), hecho por el agente.
 - [ ] ClickUp en **finalizado** con la Lista de control marcada.
 
 ## Anexo C – Registro de cambios
@@ -792,3 +806,6 @@ Dame el mensaje de commit, dime qué mover en ClickUp y registra el cierre en el
 | 28/10/2026 | M1 / HU-01 | Ajuste a la explicación técnica de HU-01: un ViewModel por pantalla (`InicioViewModel`, `PublicarViewModel`, `MisAnunciosViewModel`, `AjustesViewModel`) con estado en `StateFlow`, leído con `collectAsStateWithLifecycle()` en `InicioScreen`, `PublicarScreen`, `MisAnunciosScreen` y `AjustesScreen`; barra inferior con `ShortNavigationBar` de Material 3 (64 dp, igual a Figma) y Publicar con `minimumInteractiveComponentSize()` | `HU-01: ViewModels por pantalla y barra con ShortNavigationBar` | Verificado en el emulador: se ve igual a Figma y la navegación funciona |
 | 28/10/2026 | HU-02 · Conexión con Firebase y Supabase | Firebase `clasificados-d5227` (plan Spark, organización correounivalle.edu.co, sin Analytics ni Gemini): Authentication correo/contraseña y Firestore en southamerica-east1 con reglas temporales. Supabase `clasificados` (ref `ruwqqnprgpjplvfgznup`, plan Free, São Paulo, cuenta GitHub nueva de Oscar porque la anterior ya tenía 2 proyectos Free): bucket público `anuncios-fotos`, políticas temporales en `pruebas/` y Firebase como auth de terceros. Código: `ClasificadosApp` (caché de Firestore solo en memoria), `SupabaseCliente`, `Anuncio`, `AnunciosRepository`, `FotosRepository`, prueba `ConexionNubeTest` y KDoc en todo el código. Versiones: Firebase BoM 35.1.0, Google Services 4.5.0, Supabase 3.8.0, Ktor OkHttp 3.5.1, coroutines-play-services 1.11.0, androidx.test runner 1.7.0 y ext-junit 1.3.0 | `HU-02 · Conexión con Firebase y Supabase: Auth, Firestore en memoria, Storage y prueba de conexión` | Las 3 pruebas pasan en el emulador; documento en `pruebas/` de Firestore e imagen `pruebas/prueba.png` en el bucket. Pendiente al cerrar: quitar reglas y políticas temporales. Para HU-16: Supabase pide el rol `authenticated` en los tokens de Firebase |
 | 28/10/2026 | HU-02 · Conexión con Firebase y Supabase | **Cierre:** se quitaron los permisos temporales. Firestore: todo exige sesión (`request.auth != null`). Supabase: se borraron las políticas «Prueba HU-02 leer/subir/actualizar». `ConexionNubeTest` conserva solo la prueba de caché en memoria | `HU-02 · Conexión con Firebase y Supabase: cierre y retiro de permisos temporales` | El documento `pruebas/…` de Firestore y la imagen `pruebas/prueba.png` siguen en las consolas; Oscar decide si los borra |
+| 28/10/2026 | Diseño / HU-01 | **Cambio de diseño aprobado por Oscar:** barra inferior con 3 pestañas (Inicio, Mis anuncios, Ajustes) y botón circular «Publicar» elevado y centrado (sección 1.9). Figma actualizado: componente «Barra inferior», espacio inferior en las pantallas y nuevos estados 03b, 05b, 05c, 06b, 10b, 11b, 13b, 14b; modo oscuro completo | — | **Pendiente en código:** ajustar la barra de HU-01 a este diseño (reabre HU-01 en ClickUp mientras se aplica) |
+| 28/10/2026 | Guía | Sección 0.4: un solo commit por historia completa, y el agente hace el commit y el push. Nueva sección 0.6 con 8 reglas acordadas en el chat (prioridad de la guía, KDoc en todo el código, Figma manda, máximo 1 o 2 consultas a Figma, nombres de historias, sin códigos crípticos, solo proyectos de Clasificados en la nube, acciones que hace Oscar). Se corrigieron textos viejos: Anexo B (formato de commit), 1.11 (datos ya definidos) y casillas de Preparación y HU-02 | Va en el commit del ajuste de HU-01 | Aprobado por Oscar |
+| 28/10/2026 | HU-01 · Proyecto base con arquitectura MVVM y tema visual | **Ajuste al cambio de diseño (sección 1.9):** barra con 3 pestañas (Inicio, Mis anuncios, Ajustes) en `ShortNavigationBar` y nuevo `BotonPublicar` (círculo verde de 60 dp, aro de 5 dp, sombra verde, + de 28 dp, «Publicar» 12 sp negrita) que flota centrado a 7 dp de la barra como botón flotante del `Scaffold`. Espacio final del contenido con scroll: 96 dp (`EspacioBotonPublicar`) en vez de 64, porque el botón ocupa unos 95 dp; arriba la pantalla usa todo el alto. **Arranque igual a la pantalla 00:** librería `core-splashscreen` 1.2.0, íconos `ic_arranque_claro` e `ic_arranque_oscuro`, temas de arranque claro y oscuro; en Android 13+ el arranque sigue el tema de la app y en Android 8 a 12 sigue el modo oscuro del teléfono. Se usaron 2 consultas a Figma (barra y pantalla 00) | `HU-01 · Proyecto base con arquitectura MVVM y tema visual: barra con botón Publicar flotante y arranque de la pantalla 00` | Verificado por el agente y por Oscar en el emulador, tema claro y oscuro. Resuelve el pendiente de la fila anterior; ClickUp: HU-01 vuelve a *finalizado* |

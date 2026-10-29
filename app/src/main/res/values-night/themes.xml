@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Android 8 a 12: el arranque no puede leer el tema de la app, así que sigue el modo oscuro
+      del teléfono y usa la versión oscura de la pantalla 00.
+    -->
+    <style name="Theme.Clasificados.Arranque" parent="Theme.Clasificados.Arranque.Oscuro" />
+</resources>

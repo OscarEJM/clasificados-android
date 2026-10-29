@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Logo del arranque (pantalla 00 de Figma): cuadro de 88 dp con esquinas de 26 dp y la cuadrícula
+  de 2 × 2 en el centro. Lienzo de 288 dp: es el tamaño que Android usa para el ícono de arranque
+  sin fondo propio; el cuadro queda dentro del círculo visible de 192 dp, así que no se recorta.
+  Versión clara: cuadro blanco y cuadrícula azul #2563EB (tokens superficie y primario del tema claro).
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="288dp"
+    android:height="288dp"
+    android:viewportWidth="288"
+    android:viewportHeight="288">
+    <path
+        android:fillColor="@color/arranque_claro_cuadro"
+        android:pathData="M126,100H162A26,26 0,0 1,188 126V162A26,26 0,0 1,162 188H126A26,26 0,0 1,100 162V126A26,26 0,0 1,126 100Z" />
+    <path
+        android:strokeColor="@color/arranque_claro_icono"
+        android:strokeWidth="3.7"
+        android:pathData="M128.4,123.8h7.4a4.6,4.6 0,0 1,4.6 4.6v7.4a4.6,4.6 0,0 1,-4.6 4.6h-7.4a4.6,4.6 0,0 1,-4.6 -4.6v-7.4a4.6,4.6 0,0 1,4.6 -4.6z" />
+    <path
+        android:strokeColor="@color/arranque_claro_icono"
+        android:strokeWidth="3.7"
+        android:pathData="M152.2,123.8h7.4a4.6,4.6 0,0 1,4.6 4.6v7.4a4.6,4.6 0,0 1,-4.6 4.6h-7.4a4.6,4.6 0,0 1,-4.6 -4.6v-7.4a4.6,4.6 0,0 1,4.6 -4.6z" />
+    <path
+        android:strokeColor="@color/arranque_claro_icono"
+        android:strokeWidth="3.7"
+        android:pathData="M128.4,147.6h7.4a4.6,4.6 0,0 1,4.6 4.6v7.4a4.6,4.6 0,0 1,-4.6 4.6h-7.4a4.6,4.6 0,0 1,-4.6 -4.6v-7.4a4.6,4.6 0,0 1,4.6 -4.6z" />
+    <path
+        android:strokeColor="@color/arranque_claro_icono"
+        android:strokeWidth="3.7"
+        android:pathData="M152.2,147.6h7.4a4.6,4.6 0,0 1,4.6 4.6v7.4a4.6,4.6 0,0 1,-4.6 4.6h-7.4a4.6,4.6 0,0 1,-4.6 -4.6v-7.4a4.6,4.6 0,0 1,4.6 -4.6z" />
+</vector>

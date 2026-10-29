@@ -4,4 +4,27 @@
     <style name="Theme.Clasificados" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@color/fondo</item>
     </style>
+
+    <!--
+      Arranque: lo que Android muestra apenas se abre la app, antes de dibujarla. Copia la
+      pantalla 00 · Bienvenida de Figma (fondo y logo). Al terminar pasa a Theme.Clasificados.
+    -->
+    <style name="Theme.Clasificados.Arranque.Claro" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/arranque_claro_fondo</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_arranque_claro</item>
+        <item name="postSplashScreenTheme">@style/Theme.Clasificados</item>
+    </style>
+
+    <style name="Theme.Clasificados.Arranque.Oscuro" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/arranque_oscuro_fondo</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_arranque_oscuro</item>
+        <item name="postSplashScreenTheme">@style/Theme.Clasificados</item>
+    </style>
+
+    <!--
+      Tema de arranque de la actividad. En Android 13+ MainActivity elige Claro u Oscuro según el
+      tema de la app; en Android 8 a 12 Android solo puede seguir el modo oscuro del teléfono
+      (ver values-night/themes.xml).
+    -->
+    <style name="Theme.Clasificados.Arranque" parent="Theme.Clasificados.Arranque.Claro" />
 </resources>
