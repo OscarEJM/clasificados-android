@@ -63,10 +63,16 @@ Si se usan las dos herramientas, **una sola trabaja a la vez sobre el mismo mome
 
 ## 0.4 Commits y ramas
 
-- Rama principal: `main`. Por ser un proyecto individual se trabaja directo en `main`, salvo que Oscar indique lo contrario.
-- Formato del mensaje (desde HU-02): `HU-XX · Nombre de la historia: descripción corta en español`. Ejemplo: `HU-04 · Registrarme: validación de campos del registro`. Los commits de HU-01 conservan el formato anterior (`HU-01: …`).
-- Se sube a GitHub **solo cuando la historia está completa**: un único commit y push a `main` por historia, no uno por cada cambio intermedio. El docente evalúa el aporte con el historial.
-- **El agente hace el commit y el push** con git, usando el mensaje en el formato anterior. Antes revisa que no vaya ningún secreto (RN-20) y al terminar le dice a Oscar qué subió.
+**Desde el Sprint 2 (HU-06) se trabaja con una rama por historia** (sugerencia del docente en la revisión del 29 de octubre). El Sprint 1 (HU-01 a HU-05) se hizo directo en `main` y quedó como la versión estable **v1.0**.
+
+- **Ramas:**
+  - `main`: versión estable. Solo recibe trabajo al cierre de cada sprint.
+  - `desarrollo`: reúne las historias terminadas del sprint en curso.
+  - Una rama por historia, creada desde `desarrollo`, con el código y el nombre de la historia en minúsculas y sin tildes. Ejemplo: `hu-06-explorar-categorias`.
+- **Commits dentro de la rama de la historia:** varios, uno por cada avance terminado (pantalla, ViewModel, pruebas…), y la rama se sube a GitHub. Formato del mensaje: `HU-XX · Nombre de la historia: descripción corta en español`. Ejemplo: `HU-06 · Explorar categorías: pantalla 03 con las seis tarjetas`. Los commits de HU-01 conservan el formato anterior (`HU-01: …`).
+- **Unir una historia:** cuando Oscar prueba y aprueba todos los criterios, el agente abre en GitHub un pull request de la rama de la historia hacia `desarrollo` y lo une.
+- **Versión estable:** al cierre de cada sprint, el agente abre un pull request de `desarrollo` hacia `main`, lo une y marca `main` con la etiqueta de versión (v2.0 al cerrar el Sprint 2, v3.0 al cerrar el Sprint 3, y así).
+- **El agente hace los commits, el push y los pull requests** con git y GitHub. Antes revisa que no vaya ningún secreto (RN-20) y al terminar le dice a Oscar qué subió. Los commits no llevan líneas de coautor.
 
 ## 0.5 Trazabilidad (ClickUp, documentos y Figma)
 
@@ -91,6 +97,7 @@ Si se usan las dos herramientas, **una sola trabaja a la vez sobre el mismo mome
 6. **Sin códigos crípticos:** no se muestran a Oscar identificadores técnicos (huellas de commit como «c2c1844», ids internos). Un commit se nombra por su mensaje; si un id es imprescindible, se explica qué es.
 7. **Solo el proyecto Clasificados:** en Firebase y Supabase el agente trabaja únicamente en los proyectos de Clasificados. No abre, cambia ni borra otros proyectos o bases de datos de Oscar.
 8. **Acciones que hace Oscar:** iniciar sesión, crear cuentas, escribir contraseñas, aceptar términos y borrar datos. El agente lo guía paso a paso y espera su confirmación.
+9. **Ramas por historia (sugerencia del docente, desde el Sprint 2):** cada historia se trabaja en su propia rama y se une a `desarrollo`; `main` solo cambia al cierre del sprint y queda como versión estable (ver 0.4).
 
 ---
 
@@ -792,7 +799,7 @@ Dame el mensaje de commit, dime qué mover en ClickUp y registra el cierre en el
 - [ ] Corresponde a la pantalla de Figma.
 - [ ] Textos iguales a la sección 1.5.
 - [ ] Compila sin errores.
-- [ ] Commit y push con el formato `HU-XX · Nombre de la historia: …` (ver 0.4), hecho por el agente.
+- [ ] Commits y push en la rama de la historia con el formato `HU-XX · Nombre de la historia: …`, y pull request unido a `desarrollo` (ver 0.4), hechos por el agente.
 - [ ] ClickUp en **finalizado** con la Lista de control marcada.
 
 ## Anexo C – Registro de cambios
@@ -814,3 +821,4 @@ Dame el mensaje de commit, dime qué mover en ClickUp y registra el cierre en el
 | 29/10/2026 | HU-03 · Bienvenida y sesión persistente | Pantalla 00 · Bienvenida (`BienvenidaScreen`, ícono `ic_categorias` de Figma, claro y oscuro, fondo azul detrás de la barra de estado). `AuthRepository` (escucha la sesión de Firebase) y `SesionViewModel` (la 00 se ve mínimo 1 segundo, contado desde que aparece; acordado con Oscar). Navegación: arranca en Bienvenida, va a Inicio o a Inicio de sesión quitando la 00 de la pila, y protege las rutas privadas (RF-09); la barra y el botón Publicar solo en pantallas privadas. Inicio de sesión como marcador (`InicioSesionScreen` + `LoginViewModel`) hasta HU-05. Barras del sistema transparentes en `MainActivity`. Pruebas: `BienvenidaScreenTest` y `SesionPersistenteTest` con un usuario de prueba de Firebase cuyos datos están en `local.properties` (no se sube). Versiones: pruebas de Compose del BOM 2026.09.00 y Espresso 3.7.0 (la 3.5 falla en Android 17) | `HU-03 · Bienvenida y sesión persistente: pantalla 00, sesión persistente y rutas protegidas` | Las 6 pruebas pasan; Oscar comprobó los criterios en el emulador. Al terminar las pruebas Android Studio desinstala la app: se reinstala con ▶ Run 'app' |
 | 29/10/2026 | HU-04 · Registrarme | Pantalla 02 · Registro igual a Figma (1 consulta), con íconos de Figma (`ic_atras`, `ic_correo`, `ic_telefono`, `ic_ojo`). `Validador` (funciones puras con los mensajes de la 1.5), modelo `Usuario`, `AuthRepository.registrar` (crea la cuenta y guarda solo nombre y teléfono en `usuarios/{uid}`, sin contraseña; no se interrumpe al cambiar de pantalla), `RegistroViewModel` (valida al tocar «Crear cuenta», el error de un campo se borra al escribir, botón con carga). Componentes reutilizables `CampoTexto`, `BotonPrincipal` y `EnlaceInferior`. Enlace «¿No tienes cuenta? Regístrate» en el marcador de Inicio de sesión; con sesión en Inicio de sesión o Registro la app va a Inicio (RN-04). Diseños aprobados por Oscar: campo con error (borde y mensaje en color *error*), botón con circulito de carga y ojo azul cuando la contraseña está visible. Texto nuevo aprobado: «No se pudo crear la cuenta. Intenta de nuevo.» (agregado a la 1.5). Prueba `RegistroScreenTest` (criterios 2 a 6) | `HU-04 · Registrarme: pantalla 02, validaciones y creación de cuenta` | Las 12 pruebas pasan; Oscar probó el criterio 1 creando una cuenta real. Para cerrar sesión mientras no exista HU-10, correr una prueba de sesión y reinstalar con ▶ Run 'app' |
 | 29/10/2026 | HU-05 · Iniciar sesión | Pantalla 01 · Inicio de sesión igual a Figma (1 consulta), reemplaza el marcador; reutiliza `ic_categorias`, `CampoTexto`, `BotonPrincipal` y `EnlaceInferior`. `AuthRepository.iniciarSesion` (contraseña equivocada y correo inexistente dan el mismo resultado), `LoginViewModel` (valida correo y contraseña obligatoria; «Correo o contraseña incorrectos» debajo de la contraseña, acordado con Oscar; el error de un campo se borra al escribir), `Validador.validarContrasenaObligatoria`. Al entrar, la regla de sesión de HU-03 lleva a Inicio y limpia la pila. Texto nuevo aprobado: «No se pudo iniciar sesión. Intenta de nuevo.» (agregado a la 1.5). Pruebas: `InicioSesionScreenTest` (criterios 2 a 4) y `credencialesCorrectas_llevanAInicio` en `SesionPersistenteTest` (criterio 1); las de HU-03 ahora buscan «Inicia sesión» | `HU-05 · Iniciar sesión: pantalla 01, validaciones e inicio de sesión` | Las 17 pruebas pasan; Oscar probó los 4 criterios en el emulador |
+| 02/11/2026 | Cierre del Sprint 1 / Guía | Oscar cerró el Sprint 1 en ClickUp. Por sugerencia del docente, desde el Sprint 2 se trabaja con una rama por historia que se une a `desarrollo` con pull request, y `main` queda como versión estable que solo cambia al cierre de cada sprint (secciones 0.4 y 0.6, regla 9; Anexo B). Lo hecho en el Sprint 1 queda como versión estable **v1.0**, y se crea la rama `desarrollo` | `Docs: trabajo con ramas por historia y versión estable` | Último commit directo en `main`. Etiqueta v1.0 en `main` |
