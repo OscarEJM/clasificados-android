@@ -31,3 +31,8 @@ val TextoSecundarioOscuro = Color(0xFF9CA3AF)
 val BordeOscuro = Color(0xFF2D3748)
 val ErrorOscuro = Color(0xFFF87171)
 val ExitoOscuro = Color(0xFF4ADE80)
+
+// Ícono gris de la tarjeta «Más categorías» (HU-06). El claro es el de Figma (pantalla 03);
+// el oscuro usa texto-secundario porque esa tarjeta no aparece en la 04 oscura.
+val IconoNeutroClaro = Color(0xFF4B5563)
+val IconoNeutroOscuro = TextoSecundarioOscuro
