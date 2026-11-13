@@ -35,6 +35,13 @@
     <string name="registro_ya_tienes_cuenta">¿Ya tienes cuenta?</string>
     <string name="registro_inicia_sesion">Inicia sesión</string>
     <string name="accion_volver">Volver</string>
+
+    <!-- 03 · Inicio y 04 · Todas las categorías (textos de Figma) -->
+    <string name="inicio_buscador">¿Qué estás buscando hoy?</string>
+    <string name="inicio_categorias">Categorías</string>
+    <string name="inicio_ver_todas">Ver todas</string>
+    <string name="categorias_mas">Más categorías</string>
+    <string name="todas_categorias_titulo">Todas las categorías</string>
     <string name="accion_mostrar_contrasena">Mostrar contraseña</string>
     <string name="accion_ocultar_contrasena">Ocultar contraseña</string>
 </resources>
