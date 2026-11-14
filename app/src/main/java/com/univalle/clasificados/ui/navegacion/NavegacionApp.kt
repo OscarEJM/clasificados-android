@@ -23,6 +23,7 @@ import com.univalle.clasificados.ui.componentes.BarraInferior
 import com.univalle.clasificados.ui.componentes.BotonPublicar
 import com.univalle.clasificados.ui.pantallas.AjustesScreen
 import com.univalle.clasificados.ui.pantallas.BienvenidaScreen
+import com.univalle.clasificados.ui.pantallas.DetalleScreen
 import com.univalle.clasificados.ui.pantallas.InicioScreen
 import com.univalle.clasificados.ui.pantallas.InicioSesionScreen
 import com.univalle.clasificados.ui.pantallas.ListadoCategoriaScreen
@@ -124,8 +125,16 @@ fun NavegacionApp(sesionViewModel: SesionViewModel = viewModel()) {
             }
             composable(Rutas.LISTADO_CATEGORIA) {
                 Box(Modifier.padding(innerPadding)) {
-                    ListadoCategoriaScreen(alVolver = { navController.popBackStack() })
+                    ListadoCategoriaScreen(
+                        alVolver = { navController.popBackStack() },
+                        alAbrirAnuncio = { navController.navigate(Rutas.detalle(it.id)) }
+                    )
                 }
+            }
+            // El detalle ocupa toda la pantalla: sus fotos van detrás de la barra de estado (Figma 07)
+            // y la pantalla se encarga de dejar libres las barras del sistema (RNF-10).
+            composable(Rutas.DETALLE) {
+                DetalleScreen(alVolver = { navController.popBackStack() })
             }
             composable(Rutas.PUBLICAR) { Box(Modifier.padding(innerPadding)) { PublicarScreen() } }
             composable(Rutas.MIS_ANUNCIOS) { Box(Modifier.padding(innerPadding)) { MisAnunciosScreen() } }

@@ -16,11 +16,20 @@ object Rutas {
     /** Nombre del argumento con el id de la categoría en la ruta del listado. */
     const val ARG_CATEGORIA = "categoriaId"
 
-    /** Listado de anuncios de una categoría (pantalla 05). En HU-06 es un marcador; HU-07 lo completa. */
+    /** Listado de anuncios de una categoría (pantalla 05, HU-07). */
     const val LISTADO_CATEGORIA = "listado/{$ARG_CATEGORIA}"
 
     /** Ruta del listado de la categoría con ese [categoriaId]. */
     fun listado(categoriaId: String) = "listado/$categoriaId"
+
+    /** Nombre del argumento con el id del anuncio en la ruta del detalle (HU-08). */
+    const val ARG_ANUNCIO = "anuncioId"
+
+    /** Pantalla 07 · Detalle del anuncio (HU-08). No muestra la barra inferior, como en Figma. */
+    const val DETALLE = "detalle/{$ARG_ANUNCIO}"
+
+    /** Ruta del detalle del anuncio con ese [anuncioId]. */
+    fun detalle(anuncioId: String) = "detalle/$anuncioId"
 
     /** Pantallas que se pueden ver sin sesión: 00, 01 y 02 (RF-09). */
     val PUBLICAS = setOf(BIENVENIDA, INICIO_SESION, REGISTRO)

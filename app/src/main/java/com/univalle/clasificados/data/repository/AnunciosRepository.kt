@@ -32,6 +32,19 @@ class AnunciosRepository(
             .await()
             .toObjects(Anuncio::class.java)
 
+    /**
+     * Un anuncio por su id, para la pantalla 07 · Detalle (HU-08 · RF-14). Se pide al servidor
+     * por la misma razón que [anunciosDeCategoria]: sin internet debe dar error.
+     *
+     * @param id id del documento en la colección «anuncios».
+     * @return el anuncio, o `null` si ya no existe (por ejemplo, lo borró su autor).
+     */
+    suspend fun anuncio(id: String): Anuncio? =
+        db.collection(COLECCION_ANUNCIOS).document(id)
+            .get(Source.SERVER)
+            .await()
+            .toObject(Anuncio::class.java)
+
     // --- Funciones de prueba de conexión (HU-02). Escriben y leen en la colección «pruebas». ---
 
     /** Escribe un documento de prueba y devuelve su id. */
