@@ -3,6 +3,7 @@ package com.univalle.clasificados.ui.pantallas
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -53,8 +55,8 @@ private val AltoTarjetaPerfil = 86.dp
  * Pantalla 16 · Ajustes (HU-09 · Ver mi perfil en Ajustes, RF-33), según Figma.
  *
  * Arriba, la tarjeta de perfil con las iniciales, el nombre y el correo de la cuenta con sesión.
- * Debajo, «Apariencia» con el interruptor «Modo oscuro» y «Cuenta» con «Cerrar sesión»: se ven
- * como en Figma, pero se conectan en HU-11 y HU-10 (acordado con Oscar). El interruptor muestra
+ * Debajo, «Apariencia» con el interruptor «Modo oscuro», que se ve como en Figma pero se conecta
+ * en HU-11 (acordado con Oscar), y «Cuenta» con «Cerrar sesión» (HU-10 · RF-08). El interruptor muestra
  * el tema que está activo. Al final, «Clasificados · Versión …».
  *
  * Mientras llega el nombre se ve el circulito azul en lugar de la tarjeta, y sin internet el
@@ -133,9 +135,13 @@ fun AjustesScreen(viewModel: AjustesViewModel = viewModel()) {
             }
 
             Seccion(stringResource(R.string.ajustes_cuenta)) {
-                // «Cerrar sesión» se conecta en HU-10.
+                // HU-10 · Cerrar sesión (RF-08): toda la fila se toca. Al cerrarse la sesión, la regla de
+                // HU-03 lleva a Inicio de sesión y borra las pantallas anteriores.
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(role = Role.Button, onClick = viewModel::cerrarSesion)
+                        .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(14.dp)
                 ) {

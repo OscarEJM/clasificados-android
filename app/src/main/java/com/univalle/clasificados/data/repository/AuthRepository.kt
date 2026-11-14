@@ -126,6 +126,12 @@ class AuthRepository(
         awaitClose { auth.removeAuthStateListener(oyente) }
     }
 
+    /**
+     * Cierra la sesión en este teléfono (HU-10 · RF-08). No necesita internet: Firebase solo
+     * borra la sesión guardada en el dispositivo. [sesionActiva] y [uidActual] avisan del cambio.
+     */
+    fun cerrarSesion() = auth.signOut()
+
     /** Correo de la cuenta con sesión, que vive en Firebase Authentication (sección 1.8). */
     fun correoActual(): String = auth.currentUser?.email.orEmpty()
 
