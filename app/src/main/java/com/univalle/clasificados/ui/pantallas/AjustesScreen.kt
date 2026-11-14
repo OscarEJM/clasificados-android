@@ -55,8 +55,8 @@ private val AltoTarjetaPerfil = 86.dp
  * Pantalla 16 · Ajustes (HU-09 · Ver mi perfil en Ajustes, RF-33), según Figma.
  *
  * Arriba, la tarjeta de perfil con las iniciales, el nombre y el correo de la cuenta con sesión.
- * Debajo, «Apariencia» con el interruptor «Modo oscuro», que se ve como en Figma pero se conecta
- * en HU-11 (acordado con Oscar), y «Cuenta» con «Cerrar sesión» (HU-10 · RF-08). El interruptor muestra
+ * Debajo, «Apariencia» con el interruptor «Modo oscuro» (HU-11 · RF-31), y «Cuenta» con
+ * «Cerrar sesión» (HU-10 · RF-08). El interruptor muestra
  * el tema que está activo. Al final, «Clasificados · Versión …».
  *
  * Mientras llega el nombre se ve el circulito azul en lugar de la tarjeta, y sin internet el
@@ -65,6 +65,7 @@ private val AltoTarjetaPerfil = 86.dp
 @Composable
 fun AjustesScreen(viewModel: AjustesViewModel = viewModel()) {
     val perfil by viewModel.perfil.collectAsStateWithLifecycle()
+    val modoOscuro by viewModel.modoOscuro.collectAsStateWithLifecycle()
     val colores = ClasificadosTheme.colores
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -118,10 +119,10 @@ fun AjustesScreen(viewModel: AjustesViewModel = viewModel()) {
                             fontSize = 12.sp
                         )
                     }
-                    // Muestra el tema activo; cambiarlo es de HU-11.
+                    // HU-11: muestra el tema guardado y, al tocarlo, toda la app cambia de tema al instante.
                     Switch(
-                        checked = colores.oscuro,
-                        onCheckedChange = {},
+                        checked = modoOscuro,
+                        onCheckedChange = viewModel::cambiarModoOscuro,
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = Color.White,
                             checkedTrackColor = MaterialTheme.colorScheme.primary,
