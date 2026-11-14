@@ -1,9 +1,11 @@
 package com.univalle.clasificados.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.univalle.clasificados.data.repository.AuthRepository
+import com.univalle.clasificados.data.repository.PreferenciasRepository
 import com.univalle.clasificados.util.Iniciales
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,17 +40,28 @@ sealed interface EstadoPerfil {
  * Escucha qué cuenta tiene la sesión y, cada vez que cambia, lee de nuevo su perfil: el correo
  * sale de Firebase Authentication y el nombre de `usuarios/{uid}` en Firestore. Así, al cerrar
  * sesión y entrar con otra cuenta, Ajustes muestra los datos de la nueva (criterio 2).
- * También cierra la sesión (HU-10). El modo oscuro se conecta en HU-11.
+ * También cierra la sesión (HU-10) y cambia el tema claro/oscuro (HU-11).
+ *
+ * `@JvmOverloads` crea también el constructor que solo recibe [Application], que es el que usa
+ * Android para crear el ViewModel.
  */
 class AjustesViewModel @JvmOverloads constructor(
-    private val repositorio: AuthRepository = AuthRepository()
-) : ViewModel() {
+    aplicacion: Application,
+    private val repositorio: AuthRepository = AuthRepository(),
+    private val preferencias: PreferenciasRepository = PreferenciasRepository.obtener(aplicacion)
+) : AndroidViewModel(aplicacion) {
 
     /** Estado interno que solo este ViewModel puede cambiar. */
     private val _perfil = MutableStateFlow<EstadoPerfil>(EstadoPerfil.Cargando)
 
     /** Estado de solo lectura que la pantalla observa con collectAsStateWithLifecycle(). */
     val perfil: StateFlow<EstadoPerfil> = _perfil.asStateFlow()
+
+    /** Posición del interruptor «Modo oscuro»: el tema guardado en el teléfono (HU-11 · RF-32). */
+    val modoOscuro: StateFlow<Boolean> = preferencias.modoOscuro
+
+    /** El usuario tocó el interruptor: se guarda y toda la app cambia de tema al instante (RF-31). */
+    fun cambiarModoOscuro(activo: Boolean) = preferencias.cambiarModoOscuro(activo)
 
     init {
         viewModelScope.launch {
