@@ -23,8 +23,11 @@ import com.univalle.clasificados.ui.componentes.BarraInferior
 import com.univalle.clasificados.ui.componentes.BotonPublicar
 import com.univalle.clasificados.ui.pantallas.AjustesScreen
 import com.univalle.clasificados.ui.pantallas.BienvenidaScreen
+import com.univalle.clasificados.ui.pantallas.DetalleScreen
 import com.univalle.clasificados.ui.pantallas.InicioScreen
 import com.univalle.clasificados.ui.pantallas.InicioSesionScreen
+import com.univalle.clasificados.ui.pantallas.ListadoCategoriaScreen
+import com.univalle.clasificados.ui.pantallas.TodasCategoriasScreen
 import com.univalle.clasificados.ui.pantallas.MisAnunciosScreen
 import com.univalle.clasificados.ui.pantallas.PublicarScreen
 import com.univalle.clasificados.ui.pantallas.RegistroScreen
@@ -55,11 +58,16 @@ fun NavegacionApp(sesionViewModel: SesionViewModel = viewModel()) {
     }
 
     // Navega a una pestaña sin apilar pantallas repetidas y conservando el estado de cada una.
+    // «Inicio» siempre vuelve a la pantalla 03, aunque se esté en Todas las categorías o en un listado.
     val irA: (String) -> Unit = { ruta ->
-        navController.navigate(ruta) {
-            popUpTo(Rutas.INICIO) { saveState = true }
-            launchSingleTop = true
-            restoreState = true
+        if (ruta == Rutas.INICIO) {
+            navController.popBackStack(Rutas.INICIO, inclusive = false)
+        } else {
+            navController.navigate(ruta) {
+                popUpTo(Rutas.INICIO) { saveState = true }
+                launchSingleTop = true
+                restoreState = true
+            }
         }
     }
 
@@ -67,7 +75,7 @@ fun NavegacionApp(sesionViewModel: SesionViewModel = viewModel()) {
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
-            if (conBarra) BarraInferior(rutaActual = rutaActual, alSeleccionar = irA)
+            if (conBarra) BarraInferior(rutaActual = Rutas.pestanaDe(rutaActual), alSeleccionar = irA)
         },
         floatingActionButton = {
             if (conBarra) {
@@ -99,7 +107,35 @@ fun NavegacionApp(sesionViewModel: SesionViewModel = viewModel()) {
                     RegistroScreen(alVolver = { navController.popBackStack() })
                 }
             }
-            composable(Rutas.INICIO) { Box(Modifier.padding(innerPadding)) { InicioScreen() } }
+            composable(Rutas.INICIO) {
+                Box(Modifier.padding(innerPadding)) {
+                    InicioScreen(
+                        alAbrirCategoria = { navController.navigate(Rutas.listado(it.id)) },
+                        alVerTodas = { navController.navigate(Rutas.TODAS_CATEGORIAS) }
+                    )
+                }
+            }
+            composable(Rutas.TODAS_CATEGORIAS) {
+                Box(Modifier.padding(innerPadding)) {
+                    TodasCategoriasScreen(
+                        alAbrirCategoria = { navController.navigate(Rutas.listado(it.id)) },
+                        alVolver = { navController.popBackStack() }
+                    )
+                }
+            }
+            composable(Rutas.LISTADO_CATEGORIA) {
+                Box(Modifier.padding(innerPadding)) {
+                    ListadoCategoriaScreen(
+                        alVolver = { navController.popBackStack() },
+                        alAbrirAnuncio = { navController.navigate(Rutas.detalle(it.id)) }
+                    )
+                }
+            }
+            // El detalle ocupa toda la pantalla: sus fotos van detrás de la barra de estado (Figma 07)
+            // y la pantalla se encarga de dejar libres las barras del sistema (RNF-10).
+            composable(Rutas.DETALLE) {
+                DetalleScreen(alVolver = { navController.popBackStack() })
+            }
             composable(Rutas.PUBLICAR) { Box(Modifier.padding(innerPadding)) { PublicarScreen() } }
             composable(Rutas.MIS_ANUNCIOS) { Box(Modifier.padding(innerPadding)) { MisAnunciosScreen() } }
             composable(Rutas.AJUSTES) { Box(Modifier.padding(innerPadding)) { AjustesScreen() } }

@@ -17,7 +17,11 @@ data class ColoresExtra(
     val publicar: Color,
     val textoSecundario: Color,
     val borde: Color,
-    val exito: Color
+    val exito: Color,
+    /** Ícono gris de la tarjeta «Más categorías» (pantalla 03, HU-06). */
+    val iconoNeutro: Color,
+    /** `true` en el tema oscuro: elige los colores claros u oscuros de cada [com.univalle.clasificados.model.Categoria]. */
+    val oscuro: Boolean
 )
 
 private val EsquemaClaro = lightColorScheme(
@@ -65,7 +69,9 @@ private val ExtraClaro = ColoresExtra(
     publicar = PublicarClaro,
     textoSecundario = TextoSecundarioClaro,
     borde = BordeClaro,
-    exito = ExitoClaro
+    exito = ExitoClaro,
+    iconoNeutro = IconoNeutroClaro,
+    oscuro = false
 )
 
 private val ExtraOscuro = ColoresExtra(
@@ -73,7 +79,9 @@ private val ExtraOscuro = ColoresExtra(
     publicar = PublicarOscuro,
     textoSecundario = TextoSecundarioOscuro,
     borde = BordeOscuro,
-    exito = ExitoOscuro
+    exito = ExitoOscuro,
+    iconoNeutro = IconoNeutroOscuro,
+    oscuro = true
 )
 
 private val LocalColoresExtra = staticCompositionLocalOf { ExtraClaro }

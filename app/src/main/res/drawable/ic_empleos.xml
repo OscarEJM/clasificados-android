@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icono/empleos de Figma. El color se aplica desde Compose con tint. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="28dp"
+    android:height="28dp"
+    android:viewportWidth="28"
+    android:viewportHeight="28">
+    <path
+        android:pathData="M18.6667 23.3333V4.66667C18.6667 4.04783 18.4208 3.45434 17.9832 3.01675C17.5457 2.57917 16.9522 2.33333 16.3333 2.33333H11.6667C11.0478 2.33333 10.4543 2.57917 10.0168 3.01675C9.57917 3.45434 9.33333 4.04783 9.33333 4.66667V23.3333"
+        android:strokeWidth="2"
+        android:strokeColor="#FF000000"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M4.66667 7H23.3333C24.622 7 25.6667 8.04467 25.6667 9.33333V21C25.6667 22.2887 24.622 23.3333 23.3333 23.3333H4.66667C3.378 23.3333 2.33333 22.2887 2.33333 21V9.33333C2.33333 8.04467 3.378 7 4.66667 7Z"
+        android:strokeWidth="2"
+        android:strokeColor="#FF000000"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

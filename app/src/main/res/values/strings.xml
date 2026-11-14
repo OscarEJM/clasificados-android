@@ -35,6 +35,34 @@
     <string name="registro_ya_tienes_cuenta">¿Ya tienes cuenta?</string>
     <string name="registro_inicia_sesion">Inicia sesión</string>
     <string name="accion_volver">Volver</string>
+
+    <!-- 03 · Inicio y 04 · Todas las categorías (textos de Figma) -->
+    <string name="inicio_buscador">¿Qué estás buscando hoy?</string>
+    <string name="inicio_categorias">Categorías</string>
+    <string name="inicio_ver_todas">Ver todas</string>
+    <string name="categorias_mas">Más categorías</string>
+    <string name="todas_categorias_titulo">Todas las categorías</string>
+    <!-- 05 · Anuncios de categoría y 05b · Sin resultados (textos de la sección 1.5 y de Figma) -->
+    <string name="listado_contador">%1$d anuncios encontrados</string>
+    <string name="listado_vacio">No se encontraron anuncios</string>
+    <string name="sin_conexion">Sin conexión a internet. Verifica tu conexión e intenta de nuevo.</string>
+    <string name="accion_filtros">Filtros</string>
+    <string name="listado_cargando">Cargando anuncios</string>
+
+    <!-- 07 · Detalle del anuncio (textos de Figma) -->
+    <string name="detalle_descripcion">Descripción</string>
+    <string name="detalle_contacto">Contacto</string>
+    <string name="detalle_contador_fotos">%1$d / %2$d</string>
+    <string name="detalle_cargando">Cargando anuncio</string>
+
+    <!-- 16 · Ajustes (textos de Figma) -->
+    <string name="ajustes_apariencia">APARIENCIA</string>
+    <string name="ajustes_modo_oscuro">Modo oscuro</string>
+    <string name="ajustes_modo_oscuro_ayuda">Se guarda en este dispositivo</string>
+    <string name="ajustes_cuenta">CUENTA</string>
+    <string name="ajustes_cerrar_sesion">Cerrar sesión</string>
+    <string name="ajustes_version">Clasificados · Versión %1$s</string>
+    <string name="ajustes_cargando">Cargando perfil</string>
     <string name="accion_mostrar_contrasena">Mostrar contraseña</string>
     <string name="accion_ocultar_contrasena">Ocultar contraseña</string>
 </resources>
