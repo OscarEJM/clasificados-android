@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Source
 import com.univalle.clasificados.model.Usuario
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.awaitClose
@@ -114,6 +115,32 @@ class AuthRepository(
         } catch (e: Exception) {
             ResultadoInicioSesion.ERROR
         }
+
+    /**
+     * Emite el uid del usuario con sesión, o `null` si no hay sesión (HU-09). Vuelve a emitir cada
+     * vez que cambia la cuenta, así Ajustes muestra los datos de la nueva cuenta (criterio 2).
+     */
+    val uidActual: Flow<String?> = callbackFlow {
+        val oyente = FirebaseAuth.AuthStateListener { trySend(it.currentUser?.uid) }
+        auth.addAuthStateListener(oyente)
+        awaitClose { auth.removeAuthStateListener(oyente) }
+    }
+
+    /** Correo de la cuenta con sesión, que vive en Firebase Authentication (sección 1.8). */
+    fun correoActual(): String = auth.currentUser?.email.orEmpty()
+
+    /**
+     * Perfil guardado en `usuarios/{uid}` (nombre y teléfono) para la tarjeta de Ajustes (HU-09 ·
+     * RF-33). Se pide al servidor: como la caché de Firestore está solo en memoria (RN-17), sin
+     * internet debe dar error y no un perfil vacío.
+     *
+     * @return el perfil, o `null` si la cuenta no tiene perfil guardado.
+     */
+    suspend fun perfil(uid: String): Usuario? =
+        db.collection(COLECCION_USUARIOS).document(uid)
+            .get(Source.SERVER)
+            .await()
+            .toObject(Usuario::class.java)
 
     companion object {
         /** Colección de perfiles de usuario en Firestore (sección 1.8). */

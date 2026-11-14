@@ -33,6 +33,13 @@ android {
         propiedadesLocales.getProperty("PRUEBA_CONTRASENA")?.takeIf { it.isNotBlank() }?.let {
             testInstrumentationRunnerArguments["contrasenaPrueba"] = it
         }
+        // Segunda cuenta de prueba (HU-09): para comprobar que Ajustes cambia al cambiar de cuenta.
+        propiedadesLocales.getProperty("PRUEBA2_CORREO")?.takeIf { it.isNotBlank() }?.let {
+            testInstrumentationRunnerArguments["correoPrueba2"] = it
+        }
+        propiedadesLocales.getProperty("PRUEBA2_CONTRASENA")?.takeIf { it.isNotBlank() }?.let {
+            testInstrumentationRunnerArguments["contrasenaPrueba2"] = it
+        }
 
         buildConfigField("String", "SUPABASE_URL", "\"${propiedadesLocales.getProperty("SUPABASE_URL", "")}\"")
         buildConfigField("String", "SUPABASE_KEY", "\"${propiedadesLocales.getProperty("SUPABASE_KEY", "")}\"")

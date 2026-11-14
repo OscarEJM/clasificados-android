@@ -54,6 +54,15 @@
     <string name="detalle_contacto">Contacto</string>
     <string name="detalle_contador_fotos">%1$d / %2$d</string>
     <string name="detalle_cargando">Cargando anuncio</string>
+
+    <!-- 16 · Ajustes (textos de Figma) -->
+    <string name="ajustes_apariencia">APARIENCIA</string>
+    <string name="ajustes_modo_oscuro">Modo oscuro</string>
+    <string name="ajustes_modo_oscuro_ayuda">Se guarda en este dispositivo</string>
+    <string name="ajustes_cuenta">CUENTA</string>
+    <string name="ajustes_cerrar_sesion">Cerrar sesión</string>
+    <string name="ajustes_version">Clasificados · Versión %1$s</string>
+    <string name="ajustes_cargando">Cargando perfil</string>
     <string name="accion_mostrar_contrasena">Mostrar contraseña</string>
     <string name="accion_ocultar_contrasena">Ocultar contraseña</string>
 </resources>
