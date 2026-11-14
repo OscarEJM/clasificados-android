@@ -38,7 +38,7 @@ sealed interface EstadoPerfil {
  * Escucha qué cuenta tiene la sesión y, cada vez que cambia, lee de nuevo su perfil: el correo
  * sale de Firebase Authentication y el nombre de `usuarios/{uid}` en Firestore. Así, al cerrar
  * sesión y entrar con otra cuenta, Ajustes muestra los datos de la nueva (criterio 2).
- * El modo oscuro (HU-11) y cerrar sesión (HU-10) se conectan en sus historias.
+ * También cierra la sesión (HU-10). El modo oscuro se conecta en HU-11.
  */
 class AjustesViewModel @JvmOverloads constructor(
     private val repositorio: AuthRepository = AuthRepository()
@@ -63,6 +63,13 @@ class AjustesViewModel @JvmOverloads constructor(
             }
         }
     }
+
+    /**
+     * Cierra la sesión (HU-10 · Cerrar sesión, RF-08). No navega: al quedar sin sesión, la regla
+     * de HU-03 lleva a Inicio de sesión y borra la pila, así «atrás» no vuelve a las pantallas
+     * internas.
+     */
+    fun cerrarSesion() = repositorio.cerrarSesion()
 
     /** Lee el perfil de la cuenta [uid]. Cualquier fallo se muestra como falta de conexión. */
     private suspend fun cargar(uid: String) {
