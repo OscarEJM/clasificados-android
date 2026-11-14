@@ -42,6 +42,12 @@
     <string name="inicio_ver_todas">Ver todas</string>
     <string name="categorias_mas">Más categorías</string>
     <string name="todas_categorias_titulo">Todas las categorías</string>
+    <!-- 05 · Anuncios de categoría y 05b · Sin resultados (textos de la sección 1.5 y de Figma) -->
+    <string name="listado_contador">%1$d anuncios encontrados</string>
+    <string name="listado_vacio">No se encontraron anuncios</string>
+    <string name="sin_conexion">Sin conexión a internet. Verifica tu conexión e intenta de nuevo.</string>
+    <string name="accion_filtros">Filtros</string>
+    <string name="listado_cargando">Cargando anuncios</string>
     <string name="accion_mostrar_contrasena">Mostrar contraseña</string>
     <string name="accion_ocultar_contrasena">Ocultar contraseña</string>
 </resources>
