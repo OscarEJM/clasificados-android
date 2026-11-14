@@ -48,6 +48,12 @@
     <string name="sin_conexion">Sin conexión a internet. Verifica tu conexión e intenta de nuevo.</string>
     <string name="accion_filtros">Filtros</string>
     <string name="listado_cargando">Cargando anuncios</string>
+
+    <!-- 07 · Detalle del anuncio (textos de Figma) -->
+    <string name="detalle_descripcion">Descripción</string>
+    <string name="detalle_contacto">Contacto</string>
+    <string name="detalle_contador_fotos">%1$d / %2$d</string>
+    <string name="detalle_cargando">Cargando anuncio</string>
     <string name="accion_mostrar_contrasena">Mostrar contraseña</string>
     <string name="accion_ocultar_contrasena">Ocultar contraseña</string>
 </resources>
