@@ -1,5 +1,6 @@
 package com.univalle.clasificados.ui.componentes
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,12 +30,17 @@ import com.univalle.clasificados.ui.theme.ClasificadosTheme
  * por Oscar), así se evita crear dos cuentas con dos toques.
  */
 @Composable
-fun BotonPrincipal(texto: String, cargando: Boolean, alTocar: () -> Unit) {
+fun BotonPrincipal(
+    texto: String,
+    cargando: Boolean,
+    alTocar: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val colores = MaterialTheme.colorScheme
     Button(
         onClick = alTocar,
         enabled = !cargando,
-        modifier = Modifier.fillMaxWidth().height(48.dp),
+        modifier = modifier.fillMaxWidth().height(48.dp),
         shape = RoundedCornerShape(24.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = colores.primary,
@@ -80,5 +87,26 @@ fun EnlaceInferior(
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold
         )
+    }
+}
+
+/**
+ * Componente «Botón» secundario de Figma (por ejemplo «Volver» en Publicar, HU-12): 48 dp de
+ * alto, esquinas de 24 dp, fondo superficie con borde y texto primario de 15 sp.
+ */
+@Composable
+fun BotonSecundario(texto: String, alTocar: () -> Unit, modifier: Modifier = Modifier) {
+    val colores = MaterialTheme.colorScheme
+    OutlinedButton(
+        onClick = alTocar,
+        modifier = modifier.fillMaxWidth().height(48.dp),
+        shape = RoundedCornerShape(24.dp),
+        border = BorderStroke(1.dp, ClasificadosTheme.colores.borde),
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = colores.surface,
+            contentColor = colores.primary
+        )
+    ) {
+        Text(text = texto, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
     }
 }
