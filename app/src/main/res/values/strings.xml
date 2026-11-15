@@ -63,6 +63,27 @@
     <string name="ajustes_cerrar_sesion">Cerrar sesión</string>
     <string name="ajustes_version">Clasificados · Versión %1$s</string>
     <string name="ajustes_cargando">Cargando perfil</string>
+
+    <!-- 08, 09 y 09b · Publicar anuncio, pasos 1 y 2 (textos de Figma) -->
+    <string name="publicar_titulo">Publicar anuncio</string>
+    <string name="publicar_paso_categoria">Categoría</string>
+    <string name="publicar_paso_detalles">Detalles</string>
+    <string name="publicar_paso_fotos">Fotos</string>
+    <string name="publicar_paso_ubicacion">Ubicación</string>
+    <string name="publicar_continuar">Continuar</string>
+    <string name="publicar_volver">Volver</string>
+    <string name="publicar_p1_titulo">Selecciona una categoría</string>
+    <string name="publicar_p1_subtitulo">Elige la categoría que mejor describa tu anuncio</string>
+    <string name="publicar_p2_titulo">Detalles del anuncio</string>
+    <string name="publicar_p2_subtitulo">Sé claro y específico para obtener mejores resultados</string>
+    <string name="publicar_campo_titulo">Título del anuncio *</string>
+    <string name="publicar_campo_titulo_ejemplo">Ej: Apartamento de 2 habitaciones en arriendo</string>
+    <string name="publicar_campo_descripcion">Descripción *</string>
+    <string name="publicar_campo_descripcion_ejemplo">Describe tu producto o servicio con el mayor detalle posible</string>
+    <string name="publicar_campo_descripcion_ayuda">Mínimo 20 caracteres</string>
+    <string name="publicar_campo_precio">Precio (COP) *</string>
+    <string name="publicar_campo_precio_ejemplo">$ 0</string>
+    <string name="publicar_campo_precio_ayuda">Ingresa \"0\" si es gratis</string>
     <string name="accion_mostrar_contrasena">Mostrar contraseña</string>
     <string name="accion_ocultar_contrasena">Ocultar contraseña</string>
 </resources>

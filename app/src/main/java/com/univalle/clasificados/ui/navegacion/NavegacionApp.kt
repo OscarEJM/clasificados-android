@@ -32,6 +32,7 @@ import com.univalle.clasificados.ui.pantallas.MisAnunciosScreen
 import com.univalle.clasificados.ui.pantallas.PublicarScreen
 import com.univalle.clasificados.ui.pantallas.RegistroScreen
 import com.univalle.clasificados.viewmodel.EstadoSesion
+import com.univalle.clasificados.viewmodel.PublicarViewModel
 import com.univalle.clasificados.viewmodel.SesionViewModel
 
 /**
@@ -52,6 +53,9 @@ fun NavegacionApp(sesionViewModel: SesionViewModel = viewModel()) {
     val rutaActual = entradaActual?.destination?.route
     val estadoSesion by sesionViewModel.estado.collectAsStateWithLifecycle()
     val conBarra = rutaActual in Rutas.CON_BARRA
+
+    // Formulario de Publicar compartido por sus cuatro pasos y por toda la app mientras esté abierta.
+    val publicarViewModel: PublicarViewModel = viewModel()
 
     LaunchedEffect(estadoSesion, rutaActual) {
         aplicarReglasDeSesion(navController, estadoSesion, rutaActual)
@@ -136,7 +140,12 @@ fun NavegacionApp(sesionViewModel: SesionViewModel = viewModel()) {
             composable(Rutas.DETALLE) {
                 DetalleScreen(alVolver = { navController.popBackStack() })
             }
-            composable(Rutas.PUBLICAR) { Box(Modifier.padding(innerPadding)) { PublicarScreen() } }
+            // El borrador vive en un ViewModel de la actividad: se conserva al salir de Publicar (HU-12).
+            composable(Rutas.PUBLICAR) {
+                Box(Modifier.padding(innerPadding)) {
+                    PublicarScreen(viewModel = publicarViewModel, alSalir = { navController.popBackStack() })
+                }
+            }
             composable(Rutas.MIS_ANUNCIOS) { Box(Modifier.padding(innerPadding)) { MisAnunciosScreen() } }
             composable(Rutas.AJUSTES) { Box(Modifier.padding(innerPadding)) { AjustesScreen() } }
         }

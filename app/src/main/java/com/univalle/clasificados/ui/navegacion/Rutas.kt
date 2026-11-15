@@ -41,6 +41,9 @@ object Rutas {
     fun pestanaDe(ruta: String?): String? =
         if (ruta == TODAS_CATEGORIAS || ruta == LISTADO_CATEGORIA) INICIO else ruta
 
-    /** Pantallas que muestran la barra inferior y el botón «Publicar». */
-    val CON_BARRA = setOf(INICIO, PUBLICAR, MIS_ANUNCIOS, AJUSTES, TODAS_CATEGORIAS, LISTADO_CATEGORIA)
+    /**
+     * Pantallas que muestran la barra inferior y el botón «Publicar». Publicar no la lleva: en
+     * Figma (pantallas 08 a 11) tiene su propia barra con flecha atrás (HU-12).
+     */
+    val CON_BARRA = setOf(INICIO, MIS_ANUNCIOS, AJUSTES, TODAS_CATEGORIAS, LISTADO_CATEGORIA)
 }
