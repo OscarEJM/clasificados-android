@@ -84,6 +84,15 @@
     <string name="publicar_campo_precio">Precio (COP) *</string>
     <string name="publicar_campo_precio_ejemplo">$ 0</string>
     <string name="publicar_campo_precio_ayuda">Ingresa \"0\" si es gratis</string>
+
+    <!-- 10 y 10b · Publicar anuncio, paso 3 (textos de Figma) -->
+    <string name="publicar_p3_titulo">Agrega fotografías</string>
+    <string name="publicar_p3_subtitulo">Agrega fotografías que ayuden a destacar tu anuncio</string>
+    <string name="publicar_fotos_zona">Toca para agregar fotos</string>
+    <string name="publicar_fotos_reglas">JPG o PNG · máx. 5 MB c/u · de 1 a 5 fotos</string>
+    <string name="publicar_fotos_seleccionadas">Fotos seleccionadas</string>
+    <string name="publicar_foto_numero">Foto %1$d</string>
+    <string name="publicar_quitar_foto">Quitar foto %1$d</string>
     <string name="accion_mostrar_contrasena">Mostrar contraseña</string>
     <string name="accion_ocultar_contrasena">Ocultar contraseña</string>
 </resources>

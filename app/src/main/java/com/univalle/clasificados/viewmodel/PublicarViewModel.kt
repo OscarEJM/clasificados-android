@@ -1,10 +1,14 @@
 package com.univalle.clasificados.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import android.net.Uri
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.univalle.clasificados.data.repository.AuthRepository
+import com.univalle.clasificados.data.repository.GaleriaRepository
 import com.univalle.clasificados.model.Categoria
 import com.univalle.clasificados.util.Validador
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,6 +16,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Borrador del anuncio mientras se llena el formulario de Publicar (HU-12). Vive solo en memoria:
@@ -19,18 +24,23 @@ import kotlinx.coroutines.launch
  *
  * @property categoria la categoría elegida en el paso 1; `null` si todavía no se eligió.
  * @property precio lo escrito en el campo de precio, solo dígitos (se convierte a número al guardar).
+ * @property fotos fotos elegidas en la galería, en el orden en que se agregaron (HU-13). Son las
+ * direcciones de las fotos en el teléfono; se suben a Supabase al publicar (HU-14).
  */
 data class BorradorAnuncio(
     val categoria: Categoria? = null,
     val titulo: String = "",
     val descripcion: String = "",
-    val precio: String = ""
+    val precio: String = "",
+    val fotos: List<Uri> = emptyList()
 )
 
 /**
  * Estado del formulario de cuatro pasos (RF-21).
- * @property paso paso actual, de 1 a 4. En HU-12 existen el 1 y el 2; el 3 es un marcador hasta HU-13.
+ * @property paso paso actual, de 1 a 4. El 4 es un marcador hasta HU-14.
  * @property errorCategoria mensaje del paso 1, o `null`.
+ * @property errorFotos mensaje del paso 3 («Agrega al menos 1 foto», «Máximo 5 fotos» o
+ * «Solo se permiten imágenes JPG o PNG de máximo 5 MB»), o `null`.
  */
 data class PublicarUiState(
     val paso: Int = 1,
@@ -38,11 +48,20 @@ data class PublicarUiState(
     val errorCategoria: String? = null,
     val errorTitulo: String? = null,
     val errorDescripcion: String? = null,
-    val errorPrecio: String? = null
+    val errorPrecio: String? = null,
+    val errorFotos: String? = null
 ) {
     /** Contador vivo del título: «Mínimo 10 caracteres · N escritos» (sección 1.5). */
     val contadorTitulo: String
         get() = "Mínimo ${Validador.MINIMO_TITULO} caracteres · ${borrador.titulo.length} escritos"
+
+    /** Contador del paso 3: «N / 5» (RF-24). */
+    val contadorFotos: String
+        get() = "${borrador.fotos.size} / ${Validador.MAXIMO_FOTOS}"
+
+    /** Cuántas fotos más se pueden agregar. */
+    val cuposFotos: Int
+        get() = Validador.MAXIMO_FOTOS - borrador.fotos.size
 }
 
 /**
@@ -56,10 +75,19 @@ data class PublicarUiState(
  *
  * Los errores aparecen al tocar «Continuar» y el de cada campo se borra al escribir en él, igual
  * que en Registro (acordado con Oscar).
+ *
+ * En el paso 3 (HU-13 · Publicar anuncio: agregar fotos; RF-24) revisa cada foto que llega de la
+ * galería con [GaleriaRepository] y [Validador.esFotoValida]: solo agrega las JPG o PNG de hasta
+ * 5 MB, y como máximo 5 en total.
+ *
+ * `@JvmOverloads` crea también el constructor que solo recibe [Application], que es el que usa
+ * Android para crear el ViewModel.
  */
 class PublicarViewModel @JvmOverloads constructor(
-    autenticacion: AuthRepository = AuthRepository()
-) : ViewModel() {
+    aplicacion: Application,
+    autenticacion: AuthRepository = AuthRepository(),
+    private val galeria: GaleriaRepository = GaleriaRepository(aplicacion.contentResolver)
+) : AndroidViewModel(aplicacion) {
 
     /** Estado interno que solo este ViewModel puede cambiar. */
     private val _estado = MutableStateFlow(PublicarUiState())
@@ -110,9 +138,58 @@ class PublicarViewModel @JvmOverloads constructor(
                     conErrores.errorDescripcion == null && conErrores.errorPrecio == null
                 if (valido) conErrores.copy(paso = 3) else conErrores
             }
-            else -> actual // Los pasos 3 y 4 llegan en HU-13 y HU-14.
+            3 -> {
+                val error = Validador.validarCantidadFotos(borrador.fotos.size)
+                if (error == null) actual.copy(paso = 4, errorFotos = null) else actual.copy(errorFotos = error)
+            }
+            else -> actual // El paso 4 llega en HU-14.
         }
     }
+
+    /**
+     * Paso 3: el usuario tocó «Toca para agregar fotos». Si ya hay 5, muestra «Máximo 5 fotos» y
+     * no se abre la galería (criterio 3).
+     * @return `true` si se puede abrir la galería.
+     */
+    fun puedeAgregarFotos(): Boolean {
+        if (_estado.value.cuposFotos > 0) return true
+        _estado.update { it.copy(errorFotos = Validador.FOTOS_MAXIMO) }
+        return false
+    }
+
+    /**
+     * Paso 3: llegaron fotos de la galería (RF-24). Se agregan solo las JPG o PNG de hasta 5 MB
+     * que no estén ya, hasta completar 5. Si alguna no cumple el formato o el tamaño, se muestra
+     * «Solo se permiten imágenes JPG o PNG de máximo 5 MB»; si sobran fotos, «Máximo 5 fotos».
+     */
+    fun agregarFotos(elegidas: List<Uri>) {
+        if (elegidas.isEmpty()) return // El usuario cerró la galería sin elegir.
+        viewModelScope.launch {
+            val actuales = _estado.value.borrador.fotos
+            val nuevas = elegidas.filter { it !in actuales }
+            // Leer tipo y tamaño consulta al teléfono: se hace fuera del hilo de la pantalla.
+            val validas = withContext(Dispatchers.IO) {
+                nuevas.filter { uri ->
+                    val info = galeria.info(uri)
+                    Validador.esFotoValida(info.tipo, info.tamanoBytes)
+                }
+            }
+            _estado.update { estado ->
+                val yaEstan = estado.borrador.fotos
+                val caben = validas.filter { it !in yaEstan }.take(Validador.MAXIMO_FOTOS - yaEstan.size)
+                val error = when {
+                    validas.size < nuevas.size -> Validador.FOTO_INVALIDA
+                    caben.size < validas.size -> Validador.FOTOS_MAXIMO
+                    else -> null
+                }
+                estado.copy(borrador = estado.borrador.copy(fotos = yaEstan + caben), errorFotos = error)
+            }
+        }
+    }
+
+    /** Paso 3: quita una foto con la «✕» de su miniatura (pedido por Oscar). */
+    fun quitarFoto(foto: Uri) =
+        _estado.update { it.copy(borrador = it.borrador.copy(fotos = it.borrador.fotos - foto), errorFotos = null) }
 
     /**
      * «Volver»: regresa al paso anterior conservando los datos (RF-21).
