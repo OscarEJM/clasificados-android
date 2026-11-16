@@ -32,6 +32,7 @@ import com.univalle.clasificados.ui.pantallas.TodasCategoriasScreen
 import com.univalle.clasificados.ui.pantallas.MisAnunciosScreen
 import com.univalle.clasificados.ui.pantallas.PublicarScreen
 import com.univalle.clasificados.ui.pantallas.RegistroScreen
+import com.univalle.clasificados.ui.pantallas.ResultadosBusquedaScreen
 import com.univalle.clasificados.viewmodel.EstadoSesion
 import com.univalle.clasificados.viewmodel.PublicarViewModel
 import com.univalle.clasificados.viewmodel.SesionViewModel
@@ -116,7 +117,8 @@ fun NavegacionApp(sesionViewModel: SesionViewModel = viewModel()) {
                 Box(Modifier.padding(innerPadding)) {
                     InicioScreen(
                         alAbrirCategoria = { navController.navigate(Rutas.listado(it.id)) },
-                        alVerTodas = { navController.navigate(Rutas.TODAS_CATEGORIAS) }
+                        alVerTodas = { navController.navigate(Rutas.TODAS_CATEGORIAS) },
+                        alBuscar = { navController.navigate(Rutas.busqueda(it)) }
                     )
                 }
             }
@@ -125,6 +127,15 @@ fun NavegacionApp(sesionViewModel: SesionViewModel = viewModel()) {
                     TodasCategoriasScreen(
                         alAbrirCategoria = { navController.navigate(Rutas.listado(it.id)) },
                         alVolver = { navController.popBackStack() }
+                    )
+                }
+            }
+            // Pantalla 03b · Resultados de búsqueda desde Inicio (HU-15).
+            composable(Rutas.BUSQUEDA) {
+                Box(Modifier.padding(innerPadding)) {
+                    ResultadosBusquedaScreen(
+                        alVolver = { navController.popBackStack() },
+                        alAbrirAnuncio = { navController.navigate(Rutas.detalle(it.id)) }
                     )
                 }
             }

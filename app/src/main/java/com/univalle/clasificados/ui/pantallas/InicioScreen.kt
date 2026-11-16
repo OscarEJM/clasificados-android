@@ -38,17 +38,20 @@ import com.univalle.clasificados.viewmodel.InicioViewModel
 
 /**
  * Pantalla 03 · Inicio de Figma (HU-06 · Explorar categorías: RF-10 y RNF-11).
- * Muestra «Clasificados» con su lema, el buscador, el título «Categorías» con «Ver todas» y una
+ * Muestra «Clasificados» con su lema, el buscador (busca por título desde HU-15), el título «Categorías» con «Ver todas» y una
  * cuadrícula de dos por renglón con las 5 categorías principales y «Más categorías».
  * Las tarjetas solo tienen ícono y nombre. Al final deja [EspacioBotonPublicar] libre.
  *
  * @param alAbrirCategoria abre el listado de la categoría tocada.
  * @param alVerTodas «Más categorías» y «Ver todas»: abren la pantalla 04 (RF-11).
+ * @param alBuscar se llama con lo escrito al tocar la lupa del teclado, para abrir la 03b (HU-15).
+ * Si el buscador está vacío o solo tiene espacios no pasa nada (aprobado por Oscar).
  */
 @Composable
 fun InicioScreen(
     alAbrirCategoria: (Categoria) -> Unit,
     alVerTodas: () -> Unit,
+    alBuscar: (String) -> Unit = {},
     viewModel: InicioViewModel = viewModel()
 ) {
     val estado by viewModel.estado.collectAsStateWithLifecycle()
@@ -83,7 +86,8 @@ fun InicioScreen(
                 Buscador(
                     valor = estado.textoBusqueda,
                     alCambiar = viewModel::alCambiarBusqueda,
-                    ejemplo = stringResource(R.string.inicio_buscador)
+                    ejemplo = stringResource(R.string.inicio_buscador),
+                    alBuscar = { estado.textoBusqueda.trim().takeIf { it.isNotEmpty() }?.let(alBuscar) }
                 )
                 // La fila mide 48 dp por la zona táctil de «Ver todas» (12 dp sobre y bajo el texto):
                 // con 8 dp arriba el texto queda a 20 dp del buscador, como en Figma.

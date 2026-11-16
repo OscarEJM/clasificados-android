@@ -43,7 +43,8 @@ const val TARJETA_ANUNCIO = "tarjeta_anuncio"
  * Pantalla 05 · Anuncios de categoría (HU-07 · Ver los anuncios de una categoría, RF-12, RF-15).
  *
  * Arriba: flecha atrás, nombre de la categoría y el ícono de filtros (se ve, pero los filtros
- * llegan en HU-17). Debajo: el buscador (se escribe, pero busca desde HU-15), «N anuncios
+ * llegan en HU-17). Debajo: el buscador, que filtra por título dentro de la categoría mientras
+ * se escribe (HU-15 · RF-17), «N anuncios
  * encontrados» y los anuncios en dos por renglón, del más reciente al más antiguo. Tocar una
  * tarjeta abre su detalle (HU-08).
  *
@@ -60,10 +61,37 @@ fun ListadoCategoriaScreen(
     viewModel: ListadoCategoriaViewModel = viewModel()
 ) {
     val estado by viewModel.estado.collectAsStateWithLifecycle()
+    ListadoAnuncios(
+        titulo = estado.categoria?.nombre.orEmpty(),
+        textoBusqueda = estado.textoBusqueda,
+        alCambiarBusqueda = viewModel::alCambiarBusqueda,
+        carga = estado.carga,
+        alVolver = alVolver,
+        alAbrirAnuncio = alAbrirAnuncio
+    )
+}
 
+/**
+ * Diseño compartido por la pantalla 05 · Anuncios de categoría y la 03b · Resultados de búsqueda
+ * (HU-15), que en Figma son iguales salvo el título: barra superior con flecha atrás, título e
+ * ícono de filtros (llegan en HU-17), buscador, «N anuncios encontrados» y la cuadrícula de dos
+ * por renglón; o el circulito, la 05b «No se encontraron anuncios» o el mensaje de RN-18.
+ *
+ * @param alBuscar lupa del teclado; `null` si el buscador filtra mientras se escribe (05).
+ */
+@Composable
+internal fun ListadoAnuncios(
+    titulo: String,
+    textoBusqueda: String,
+    alCambiarBusqueda: (String) -> Unit,
+    carga: CargaAnuncios,
+    alVolver: () -> Unit,
+    alAbrirAnuncio: (Anuncio) -> Unit,
+    alBuscar: (() -> Unit)? = null
+) {
     Column(modifier = Modifier.fillMaxSize()) {
         BarraSuperior(
-            titulo = estado.categoria?.nombre.orEmpty(),
+            titulo = titulo,
             alVolver = alVolver,
             accion = AccionBarra(
                 icono = R.drawable.ic_filtros,
@@ -72,12 +100,13 @@ fun ListadoCategoriaScreen(
             )
         )
         Buscador(
-            valor = estado.textoBusqueda,
-            alCambiar = viewModel::alCambiarBusqueda,
+            valor = textoBusqueda,
+            alCambiar = alCambiarBusqueda,
             ejemplo = stringResource(R.string.inicio_buscador),
-            modifier = Modifier.padding(start = 16.dp, top = 4.dp, end = 16.dp)
+            modifier = Modifier.padding(start = 16.dp, top = 4.dp, end = 16.dp),
+            alBuscar = alBuscar
         )
-        when (val carga = estado.carga) {
+        when (carga) {
             CargaAnuncios.Cargando ->
                 EstadoCargando(stringResource(R.string.listado_cargando), Modifier.weight(1f))
             CargaAnuncios.Vacio -> EstadoSinResultados(Modifier.weight(1f))

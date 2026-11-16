@@ -7,6 +7,10 @@ import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performScrollToIndex
+import androidx.compose.ui.test.performScrollToNode
+import com.univalle.clasificados.ui.pantallas.CUADRICULA_ANUNCIOS
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onAllNodesWithText
@@ -76,8 +80,14 @@ class VerAnunciosCategoriaTest {
             abrirCategoria(Categoria.EMPLEOS)
             esperarTexto("${esperados.size} anuncios encontrados")
 
+            // La cuadrícula solo dibuja las tarjetas que se ven: se desplaza hasta cada anuncio para
+            // comprobar que todos tienen su tarjeta, aunque la categoría tenga más de los que caben.
+            esperados.forEach { anuncio ->
+                compose.onNodeWithTag(CUADRICULA_ANUNCIOS).performScrollToNode(hasText(anuncio.titulo))
+            }
+            compose.onNodeWithTag(CUADRICULA_ANUNCIOS).performScrollToIndex(0)
+            compose.waitForIdle()
             val tarjetas = compose.onAllNodesWithTag(TARJETA_ANUNCIO).fetchSemanticsNodes()
-            assertEquals("Cada anuncio es una tarjeta", esperados.size, tarjetas.size)
 
             // Dos por renglón: las dos primeras tarjetas comparten renglón y la tercera baja.
             val (primera, segunda, tercera) = tarjetas.map { it.boundsInRoot }

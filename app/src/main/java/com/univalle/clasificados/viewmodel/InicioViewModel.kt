@@ -9,7 +9,8 @@ import kotlinx.coroutines.flow.update
 
 /**
  * Estado de la pantalla 03 · Inicio.
- * @property textoBusqueda lo escrito en el buscador (la búsqueda se conecta en HU-15).
+ * @property textoBusqueda lo escrito en el buscador; al tocar la lupa del teclado se buscan los
+ * anuncios por título en la pantalla 03b (HU-15).
  * @property categorias las 5 categorías principales que se muestran antes de «Más categorías».
  */
 data class InicioUiState(
@@ -28,6 +29,6 @@ class InicioViewModel : ViewModel() {
     /** Estado de solo lectura que la pantalla observa con collectAsStateWithLifecycle(). */
     val estado: StateFlow<InicioUiState> = _estado.asStateFlow()
 
-    /** El usuario escribió en el buscador: se guarda el texto. Todavía no busca (HU-15). */
+    /** El usuario escribió en el buscador: se guarda el texto; la búsqueda se abre con la lupa del teclado. */
     fun alCambiarBusqueda(valor: String) = _estado.update { it.copy(textoBusqueda = valor) }
 }
