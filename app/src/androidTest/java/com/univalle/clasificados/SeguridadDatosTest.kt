@@ -23,6 +23,7 @@ import okhttp3.Request
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -108,12 +109,26 @@ class SeguridadDatosTest {
         rechazado("leer la colección pruebas") { db.collection("pruebas").limit(1).get(Source.SERVER).await() }
     }
 
+    /**
+     * Criterio 4 (RNF-17): el perfil guardado en Firestore solo tiene nombre y teléfono; ningún
+     * campo de contraseña. La contraseña solo la maneja Firebase Authentication.
+     */
+    @Test
+    fun perfilSinContrasena() = runBlocking {
+        val uid = entrar("correoPrueba2", "contrasenaPrueba2")
+        val campos = db.collection(AuthRepository.COLECCION_USUARIOS).document(uid)
+            .get(Source.SERVER).await().data.orEmpty().keys
+        assertTrue("Campos inesperados en el perfil: $campos", campos.all { it in setOf("nombre", "telefono") })
+    }
+
     /** Supabase: sin sesión no se ve ninguna foto; con sesión sí, aunque sea de otro usuario. */
     @Test
     fun fotos_soloConSesion() = runBlocking {
         val enlace = AnunciosDePrueba.foto(1)
+        // Supabase guarda en su caché las fotos ya vistas hasta 1 hora; con «?sin-cache=…» se pregunta
+        // directamente al bucket, que es lo que deciden las reglas.
         val sinSesion = OkHttpClient()
-        assertNotEquals("Sin sesión la foto no se debe ver", 200, codigo(sinSesion, enlace))
+        assertNotEquals("Sin sesión la foto no se debe ver", 200, codigo(sinSesion, "$enlace?sin-cache=${System.nanoTime()}"))
 
         entrar("correoPrueba2", "contrasenaPrueba2")
         val conSesion = OkHttpClient.Builder().addInterceptor(SesionEnFotos()).build()
