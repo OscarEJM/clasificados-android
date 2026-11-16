@@ -19,6 +19,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,18 +57,28 @@ private val FormaOpcion = RoundedCornerShape(12.dp)
  * - Paso 1 · Categoría: las 13 categorías de dos en dos; la elegida queda resaltada.
  * - Paso 2 · Detalles: título con el contador vivo, descripción y precio (solo números).
  * - Paso 3 · Fotos: zona punteada que abre la galería, contador «N / 5» y las miniaturas (HU-13).
- * - Paso 4: marcador con el indicador y «Volver» hasta HU-14 (acordado con Oscar).
+ * - Paso 4 · Ubicación y contacto: ciudad, correo y teléfono, y el botón verde «Publicar
+ *   anuncio», que muestra el circulito mientras publica (HU-14, pantallas 11 y 11b).
  *
  * La flecha atrás y el «atrás» del teléfono regresan al paso anterior; en el paso 1 cierran
  * Publicar. El borrador vive en [PublicarViewModel], que comparte toda la app.
  *
  * @param alSalir cierra Publicar y vuelve a la pantalla anterior.
+ * @param alPublicar abre Confirmación con el id del anuncio recién publicado (HU-14).
  */
 @Composable
-fun PublicarScreen(viewModel: PublicarViewModel, alSalir: () -> Unit) {
+fun PublicarScreen(viewModel: PublicarViewModel, alSalir: () -> Unit, alPublicar: (String) -> Unit = {}) {
     val estado by viewModel.estado.collectAsStateWithLifecycle()
     val volver = { if (!viewModel.volver()) alSalir() }
     BackHandler(onBack = volver)
+
+    // Al terminar de publicar: se abre Confirmación y se borra el borrador (HU-14 · RF-26).
+    LaunchedEffect(estado.publicadoId) {
+        estado.publicadoId?.let { id ->
+            viewModel.reiniciar()
+            alPublicar(id)
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize().imePadding()) {
         BarraSuperior(titulo = stringResource(R.string.publicar_titulo), alVolver = volver)
@@ -83,7 +94,7 @@ fun PublicarScreen(viewModel: PublicarViewModel, alSalir: () -> Unit) {
                 1 -> PasoCategoria(estado, viewModel)
                 2 -> PasoDetalles(estado, viewModel)
                 3 -> PasoFotos(estado, viewModel)
-                else -> Unit // Marcador del paso 4 (ubicación y contacto) hasta HU-14.
+                else -> PasoUbicacion(estado, viewModel)
             }
         }
         // Botones de Figma: 12 dp arriba y 32 dp abajo; en el paso 1 solo «Continuar».
@@ -95,7 +106,8 @@ fun PublicarScreen(viewModel: PublicarViewModel, alSalir: () -> Unit) {
                 BotonSecundario(
                     texto = stringResource(R.string.publicar_volver),
                     alTocar = volver,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    habilitado = !estado.publicando
                 )
             }
             if (estado.paso < 4) {
@@ -104,6 +116,16 @@ fun PublicarScreen(viewModel: PublicarViewModel, alSalir: () -> Unit) {
                     cargando = false,
                     alTocar = viewModel::continuar,
                     modifier = Modifier.weight(1f)
+                )
+            } else {
+                // Paso 4: botón verde «Publicar anuncio»; mientras publica, el circulito (11b).
+                BotonPrincipal(
+                    texto = stringResource(R.string.publicar_boton_publicar),
+                    cargando = estado.publicando,
+                    alTocar = viewModel::publicar,
+                    modifier = Modifier.weight(1f),
+                    color = ClasificadosTheme.colores.publicar,
+                    descripcionCargando = stringResource(R.string.publicar_publicando)
                 )
             }
         }

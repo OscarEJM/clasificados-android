@@ -23,6 +23,7 @@ import com.univalle.clasificados.ui.componentes.BarraInferior
 import com.univalle.clasificados.ui.componentes.BotonPublicar
 import com.univalle.clasificados.ui.pantallas.AjustesScreen
 import com.univalle.clasificados.ui.pantallas.BienvenidaScreen
+import com.univalle.clasificados.ui.pantallas.ConfirmacionScreen
 import com.univalle.clasificados.ui.pantallas.DetalleScreen
 import com.univalle.clasificados.ui.pantallas.InicioScreen
 import com.univalle.clasificados.ui.pantallas.InicioSesionScreen
@@ -143,7 +144,31 @@ fun NavegacionApp(sesionViewModel: SesionViewModel = viewModel()) {
             // El borrador vive en un ViewModel de la actividad: se conserva al salir de Publicar (HU-12).
             composable(Rutas.PUBLICAR) {
                 Box(Modifier.padding(innerPadding)) {
-                    PublicarScreen(viewModel = publicarViewModel, alSalir = { navController.popBackStack() })
+                    PublicarScreen(
+                        viewModel = publicarViewModel,
+                        alSalir = { navController.popBackStack() },
+                        // Confirmación reemplaza a Publicar: «atrás» ya no vuelve al formulario.
+                        alPublicar = { id ->
+                            navController.navigate(Rutas.confirmacion(id)) {
+                                popUpTo(Rutas.PUBLICAR) { inclusive = true }
+                            }
+                        }
+                    )
+                }
+            }
+            // Pantalla 12: «Ver anuncio» abre el detalle dejando solo Inicio detrás, así «atrás» desde
+            // el detalle lleva a Inicio (acordado con Oscar). «Volver al inicio» y «atrás» van a Inicio.
+            composable(Rutas.CONFIRMACION) { entrada ->
+                val anuncioId = entrada.arguments?.getString(Rutas.ARG_ANUNCIO).orEmpty()
+                Box(Modifier.padding(innerPadding)) {
+                    ConfirmacionScreen(
+                        alVerAnuncio = {
+                            navController.navigate(Rutas.detalle(anuncioId)) {
+                                popUpTo(Rutas.INICIO) { inclusive = false }
+                            }
+                        },
+                        alVolverInicio = { navController.popBackStack(Rutas.INICIO, inclusive = false) }
+                    )
                 }
             }
             composable(Rutas.MIS_ANUNCIOS) { Box(Modifier.padding(innerPadding)) { MisAnunciosScreen() } }

@@ -18,6 +18,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -28,24 +32,32 @@ import com.univalle.clasificados.ui.theme.ClasificadosTheme
  * Componente «Botón» primario de Figma: 48 dp de alto, esquinas de 24 dp, fondo primario y texto
  * de 15 sp. Mientras [cargando], muestra un circulito blanco y no se puede tocar (diseño aprobado
  * por Oscar), así se evita crear dos cuentas con dos toques.
+ *
+ * @param color fondo del botón; por defecto el primario. «Publicar anuncio» usa el verde
+ * *publicar* (Figma, pantallas 11 y 11b; HU-14).
+ * @param descripcionCargando texto que leen el lector de pantalla y las pruebas mientras se ve el
+ * circulito, por ejemplo «Publicando anuncio».
  */
 @Composable
 fun BotonPrincipal(
     texto: String,
     cargando: Boolean,
     alTocar: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    color: Color? = null,
+    descripcionCargando: String? = null
 ) {
     val colores = MaterialTheme.colorScheme
+    val fondo = color ?: colores.primary
     Button(
         onClick = alTocar,
         enabled = !cargando,
         modifier = modifier.fillMaxWidth().height(48.dp),
         shape = RoundedCornerShape(24.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = colores.primary,
+            containerColor = fondo,
             contentColor = colores.onPrimary,
-            disabledContainerColor = colores.primary,
+            disabledContainerColor = fondo,
             disabledContentColor = colores.onPrimary
         )
     ) {
@@ -53,7 +65,7 @@ fun BotonPrincipal(
             CircularProgressIndicator(
                 color = colores.onPrimary,
                 strokeWidth = 2.dp,
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(22.dp).semantics { descripcionCargando?.let { contentDescription = it } }
             )
         } else {
             Text(text = texto, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
@@ -95,16 +107,24 @@ fun EnlaceInferior(
  * alto, esquinas de 24 dp, fondo superficie con borde y texto primario de 15 sp.
  */
 @Composable
-fun BotonSecundario(texto: String, alTocar: () -> Unit, modifier: Modifier = Modifier) {
+fun BotonSecundario(
+    texto: String,
+    alTocar: () -> Unit,
+    modifier: Modifier = Modifier,
+    habilitado: Boolean = true
+) {
     val colores = MaterialTheme.colorScheme
     OutlinedButton(
         onClick = alTocar,
-        modifier = modifier.fillMaxWidth().height(48.dp),
+        enabled = habilitado,
+        modifier = modifier.fillMaxWidth().height(48.dp).alpha(if (habilitado) 1f else 0.5f),
         shape = RoundedCornerShape(24.dp),
         border = BorderStroke(1.dp, ClasificadosTheme.colores.borde),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = colores.surface,
-            contentColor = colores.primary
+            contentColor = colores.primary,
+            disabledContainerColor = colores.surface,
+            disabledContentColor = colores.primary
         )
     ) {
         Text(text = texto, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)

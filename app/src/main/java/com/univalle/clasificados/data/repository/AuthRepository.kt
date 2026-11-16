@@ -132,6 +132,9 @@ class AuthRepository(
      */
     fun cerrarSesion() = auth.signOut()
 
+    /** Uid de la cuenta con sesión en este momento, o `null` sin sesión. Es el autor del anuncio (RN-05, HU-14). */
+    fun uid(): String? = auth.currentUser?.uid
+
     /** Correo de la cuenta con sesión, que vive en Firebase Authentication (sección 1.8). */
     fun correoActual(): String = auth.currentUser?.email.orEmpty()
 

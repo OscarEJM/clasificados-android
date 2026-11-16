@@ -32,4 +32,13 @@ class GaleriaRepository(private val contenido: ContentResolver) {
         }.getOrNull()
         return InfoFoto(tipo, tamano)
     }
+
+    /**
+     * Contenido de la foto para subirla a Supabase al publicar (HU-14 · RF-26). Lee la foto
+     * original del teléfono, sin cambiarla. Se llama fuera del hilo de la pantalla.
+     * @throws java.io.IOException si la foto ya no existe en el teléfono.
+     */
+    fun leer(uri: Uri): ByteArray =
+        contenido.openInputStream(uri)?.use { it.readBytes() }
+            ?: throw java.io.IOException("No se pudo leer la foto $uri")
 }
