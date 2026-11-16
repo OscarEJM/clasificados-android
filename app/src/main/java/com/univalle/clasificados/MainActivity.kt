@@ -23,6 +23,7 @@ import com.univalle.clasificados.viewmodel.TemaViewModel
  * El tema claro u oscuro sale de [TemaViewModel], que lee la preferencia guardada en el teléfono
  * (HU-11 · RF-32). Se lee antes de dibujar la primera pantalla, así no hay parpadeo del tema
  * contrario; al cambiarla en Ajustes, Compose redibuja toda la app sin reiniciarla (RF-31).
+ * contrario; al cambiarla en Ajustes, Compose redibuja toda la app sin reiniciarla (RF-31).
  */
 class MainActivity : ComponentActivity() {
 

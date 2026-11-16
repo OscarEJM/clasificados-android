@@ -8,6 +8,7 @@ import com.univalle.clasificados.data.repository.AnunciosRepository
 import com.univalle.clasificados.model.Anuncio
 import com.univalle.clasificados.model.Categoria
 import com.univalle.clasificados.ui.navegacion.Rutas
+import com.univalle.clasificados.util.Busqueda
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,8 +36,9 @@ sealed interface CargaAnuncios {
 /**
  * Estado de la pantalla 05 · Anuncios de categoría.
  * @property categoria la categoría tocada; `null` si el id que llegó no existe.
- * @property textoBusqueda lo escrito en el buscador (la búsqueda dentro de la categoría es de HU-15).
- * @property carga si se está cargando, si hay anuncios, si está vacía o si hubo error.
+ * @property textoBusqueda lo escrito en el buscador; filtra la lista mientras se escribe (HU-15 · RF-17).
+ * @property carga si se está cargando, si hay anuncios (ya filtrados por la búsqueda), si está
+ * vacía (o la búsqueda no encontró nada) o si hubo error.
  */
 data class ListadoCategoriaUiState(
     val categoria: Categoria? = null,
@@ -65,6 +67,9 @@ class ListadoCategoriaViewModel @JvmOverloads constructor(
     /** Estado de solo lectura que la pantalla observa con collectAsStateWithLifecycle(). */
     val estado: StateFlow<ListadoCategoriaUiState> = _estado.asStateFlow()
 
+    /** Todos los anuncios de la categoría tal como llegaron de Firestore; `null` mientras carga o con error. */
+    private var todos: List<Anuncio>? = null
+
     init {
         cargar()
     }
@@ -79,7 +84,8 @@ class ListadoCategoriaViewModel @JvmOverloads constructor(
         viewModelScope.launch {
             val carga = try {
                 val anuncios = repositorio.anunciosDeCategoria(categoria.id)
-                if (anuncios.isEmpty()) CargaAnuncios.Vacio else CargaAnuncios.ConResultados(anuncios)
+                todos = anuncios
+                filtrar(anuncios, _estado.value.textoBusqueda)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -91,8 +97,22 @@ class ListadoCategoriaViewModel @JvmOverloads constructor(
         }
     }
 
-    /** El usuario escribió en el buscador: se guarda el texto. Todavía no busca (HU-15). */
-    fun alCambiarBusqueda(valor: String) = _estado.update { it.copy(textoBusqueda = valor) }
+    /**
+     * El usuario escribió en el buscador: la lista se filtra al instante por título, solo dentro de
+     * esta categoría (HU-15 · RF-17, aprobado por Oscar). Los anuncios ya están cargados, así que no
+     * se vuelve a consultar a Firestore. Al borrar el texto vuelve la lista completa.
+     */
+    fun alCambiarBusqueda(valor: String) = _estado.update { actual ->
+        val anuncios = todos
+        if (anuncios == null) actual.copy(textoBusqueda = valor)
+        else actual.copy(textoBusqueda = valor, carga = filtrar(anuncios, valor))
+    }
+
+    /** Resultado de la búsqueda: la 05b «No se encontraron anuncios» si nada coincide (RF-15). */
+    private fun filtrar(anuncios: List<Anuncio>, texto: String): CargaAnuncios {
+        val encontrados = Busqueda.filtrar(anuncios, texto)
+        return if (encontrados.isEmpty()) CargaAnuncios.Vacio else CargaAnuncios.ConResultados(encontrados)
+    }
 
     private companion object {
         const val ETIQUETA = "ListadoCategoria"

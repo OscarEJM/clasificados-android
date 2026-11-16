@@ -33,6 +33,19 @@ class AnunciosRepository(
             .toObjects(Anuncio::class.java)
 
     /**
+     * Todos los anuncios de todas las categorías, del más reciente al más antiguo, para la
+     * búsqueda desde Inicio (HU-15 · RF-16). Firestore no busca «contiene», así que el ViewModel
+     * los filtra por título. Se piden al servidor por la misma razón que [anunciosDeCategoria].
+     * Ordenar por un solo campo no necesita índice compuesto.
+     */
+    suspend fun todosLosAnuncios(): List<Anuncio> =
+        db.collection(COLECCION_ANUNCIOS)
+            .orderBy(CAMPO_FECHA, Query.Direction.DESCENDING)
+            .get(Source.SERVER)
+            .await()
+            .toObjects(Anuncio::class.java)
+
+    /**
      * Un anuncio por su id, para la pantalla 07 · Detalle (HU-08 · RF-14). Se pide al servidor
      * por la misma razón que [anunciosDeCategoria]: sin internet debe dar error.
      *
@@ -44,6 +57,25 @@ class AnunciosRepository(
             .get(Source.SERVER)
             .await()
             .toObject(Anuncio::class.java)
+
+    /**
+     * Id nuevo para un anuncio, sin escribir nada todavía (HU-14). Se pide antes de subir las
+     * fotos porque su carpeta en Supabase lleva el id del anuncio (sección 1.8).
+     */
+    fun nuevoId(): String = db.collection(COLECCION_ANUNCIOS).document().id
+
+    /**
+     * Guarda un anuncio nuevo con el id [id] (HU-14 · RF-26). La fecha de publicación la pone el
+     * servidor de Firestore (RN-12), gracias a `@ServerTimestamp` en [Anuncio.fechaPublicacion].
+     *
+     * Se usa una transacción y no una escritura normal: sin internet, una escritura normal queda
+     * en espera y se enviaría más tarde (dejando un anuncio cuyas fotos ya se borraron); la
+     * transacción, en cambio, falla de una vez y el ViewModel muestra el mensaje de RN-18.
+     */
+    suspend fun crear(id: String, anuncio: Anuncio) {
+        val referencia = db.collection(COLECCION_ANUNCIOS).document(id)
+        db.runTransaction { transaccion -> transaccion.set(referencia, anuncio) }.await()
+    }
 
     // --- Funciones de prueba de conexión (HU-02). Escriben y leen en la colección «pruebas». ---
 

@@ -52,6 +52,8 @@ private val FormaCaja = RoundedCornerShape(12.dp)
  * @param error mensaje de error; si no es `null` reemplaza a [ayuda].
  * @param ayuda texto de ayuda bajo la caja, por ejemplo «Mínimo 6 caracteres».
  * @param esContrasena oculta el texto y muestra el ojo para verlo (azul cuando está visible).
+ * @param multilinea caja de 120 dp de alto con varias líneas, como «Descripción» en Publicar (HU-12).
+ * @param prefijo texto fijo antes del valor cuando hay algo escrito, por ejemplo «$ » en el precio.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,7 +68,9 @@ fun CampoTexto(
     ayuda: String? = null,
     esContrasena: Boolean = false,
     tipoTeclado: KeyboardType = KeyboardType.Text,
-    habilitado: Boolean = true
+    habilitado: Boolean = true,
+    multilinea: Boolean = false,
+    prefijo: String? = null
 ) {
     val colores = MaterialTheme.colorScheme
     val extra = ClasificadosTheme.colores
@@ -92,9 +96,9 @@ fun CampoTexto(
         BasicTextField(
             value = valor,
             onValueChange = alCambiar,
-            modifier = Modifier.fillMaxWidth().height(48.dp),
+            modifier = Modifier.fillMaxWidth().height(if (multilinea) 120.dp else 48.dp),
             enabled = habilitado,
-            singleLine = true,
+            singleLine = !multilinea,
             textStyle = TextStyle(color = colores.onSurface, fontSize = 15.sp),
             cursorBrush = SolidColor(colores.primary),
             visualTransformation = transformacion,
@@ -107,11 +111,16 @@ fun CampoTexto(
                     value = valor,
                     innerTextField = campo,
                     enabled = habilitado,
-                    singleLine = true,
+                    singleLine = !multilinea,
                     visualTransformation = transformacion,
                     interactionSource = interaccion,
                     isError = error != null,
                     placeholder = { Text(ejemplo, fontSize = 15.sp) },
+                    prefix = if (prefijo != null && valor.isNotEmpty()) {
+                        { Text(prefijo, fontSize = 15.sp, color = colores.onSurface) }
+                    } else {
+                        null
+                    },
                     trailingIcon = when {
                         esContrasena -> {
                             {
@@ -141,7 +150,7 @@ fun CampoTexto(
                         else -> null
                     },
                     colors = coloresCaja,
-                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 0.dp),
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = if (multilinea) 14.dp else 0.dp),
                     container = {
                         OutlinedTextFieldDefaults.Container(
                             enabled = habilitado,

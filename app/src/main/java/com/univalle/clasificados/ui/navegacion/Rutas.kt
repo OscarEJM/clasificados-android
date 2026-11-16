@@ -31,16 +31,34 @@ object Rutas {
     /** Ruta del detalle del anuncio con ese [anuncioId]. */
     fun detalle(anuncioId: String) = "detalle/$anuncioId"
 
+    /** Pantalla 12 · Confirmación del anuncio recién publicado (HU-14). Sin barra inferior, como en Figma. */
+    const val CONFIRMACION = "confirmacion/{$ARG_ANUNCIO}"
+
+    /** Ruta de Confirmación del anuncio con ese [anuncioId]. */
+    fun confirmacion(anuncioId: String) = "confirmacion/$anuncioId"
+
+    /** Nombre del argumento con el texto buscado en la ruta de resultados (HU-15). */
+    const val ARG_TEXTO = "texto"
+
+    /** Pantalla 03b · Resultados de búsqueda desde Inicio (HU-15). Lleva la barra inferior con «Inicio» marcado. */
+    const val BUSQUEDA = "busqueda/{$ARG_TEXTO}"
+
+    /** Ruta de resultados para ese [texto]; se codifica para que «/», «?» o tildes no rompan la ruta. */
+    fun busqueda(texto: String) = "busqueda/${android.net.Uri.encode(texto)}"
+
     /** Pantallas que se pueden ver sin sesión: 00, 01 y 02 (RF-09). */
     val PUBLICAS = setOf(BIENVENIDA, INICIO_SESION, REGISTRO)
 
     /**
-     * Pestaña de la barra inferior que se marca en cada pantalla: Todas las categorías y el
-     * listado se abren desde Inicio, así que marcan «Inicio».
+     * Pestaña de la barra inferior que se marca en cada pantalla: Todas las categorías, el
+     * listado y los resultados de búsqueda se abren desde Inicio, así que marcan «Inicio».
      */
     fun pestanaDe(ruta: String?): String? =
-        if (ruta == TODAS_CATEGORIAS || ruta == LISTADO_CATEGORIA) INICIO else ruta
+        if (ruta == TODAS_CATEGORIAS || ruta == LISTADO_CATEGORIA || ruta == BUSQUEDA) INICIO else ruta
 
-    /** Pantallas que muestran la barra inferior y el botón «Publicar». */
-    val CON_BARRA = setOf(INICIO, PUBLICAR, MIS_ANUNCIOS, AJUSTES, TODAS_CATEGORIAS, LISTADO_CATEGORIA)
+    /**
+     * Pantallas que muestran la barra inferior y el botón «Publicar». Publicar no la lleva: en
+     * Figma (pantallas 08 a 11) tiene su propia barra con flecha atrás (HU-12).
+     */
+    val CON_BARRA = setOf(INICIO, MIS_ANUNCIOS, AJUSTES, TODAS_CATEGORIAS, LISTADO_CATEGORIA, BUSQUEDA)
 }

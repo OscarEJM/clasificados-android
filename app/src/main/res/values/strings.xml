@@ -42,6 +42,9 @@
     <string name="inicio_ver_todas">Ver todas</string>
     <string name="categorias_mas">Más categorías</string>
     <string name="todas_categorias_titulo">Todas las categorías</string>
+    <!-- 03b · Resultados de búsqueda (texto de Figma, HU-15) -->
+    <string name="busqueda_titulo">Resultados de búsqueda</string>
+
     <!-- 05 · Anuncios de categoría y 05b · Sin resultados (textos de la sección 1.5 y de Figma) -->
     <string name="listado_contador">%1$d anuncios encontrados</string>
     <string name="listado_vacio">No se encontraron anuncios</string>
@@ -63,6 +66,55 @@
     <string name="ajustes_cerrar_sesion">Cerrar sesión</string>
     <string name="ajustes_version">Clasificados · Versión %1$s</string>
     <string name="ajustes_cargando">Cargando perfil</string>
+
+    <!-- 08, 09 y 09b · Publicar anuncio, pasos 1 y 2 (textos de Figma) -->
+    <string name="publicar_titulo">Publicar anuncio</string>
+    <string name="publicar_paso_categoria">Categoría</string>
+    <string name="publicar_paso_detalles">Detalles</string>
+    <string name="publicar_paso_fotos">Fotos</string>
+    <string name="publicar_paso_ubicacion">Ubicación</string>
+    <string name="publicar_continuar">Continuar</string>
+    <string name="publicar_volver">Volver</string>
+    <string name="publicar_p1_titulo">Selecciona una categoría</string>
+    <string name="publicar_p1_subtitulo">Elige la categoría que mejor describa tu anuncio</string>
+    <string name="publicar_p2_titulo">Detalles del anuncio</string>
+    <string name="publicar_p2_subtitulo">Sé claro y específico para obtener mejores resultados</string>
+    <string name="publicar_campo_titulo">Título del anuncio *</string>
+    <string name="publicar_campo_titulo_ejemplo">Ej: Apartamento de 2 habitaciones en arriendo</string>
+    <string name="publicar_campo_descripcion">Descripción *</string>
+    <string name="publicar_campo_descripcion_ejemplo">Describe tu producto o servicio con el mayor detalle posible</string>
+    <string name="publicar_campo_descripcion_ayuda">Mínimo 20 caracteres</string>
+    <string name="publicar_campo_precio">Precio (COP) *</string>
+    <string name="publicar_campo_precio_ejemplo">$ 0</string>
+    <string name="publicar_campo_precio_ayuda">Ingresa \"0\" si es gratis</string>
+
+    <!-- 10 y 10b · Publicar anuncio, paso 3 (textos de Figma) -->
+    <string name="publicar_p3_titulo">Agrega fotografías</string>
+    <string name="publicar_p3_subtitulo">Agrega fotografías que ayuden a destacar tu anuncio</string>
+    <string name="publicar_fotos_zona">Toca para agregar fotos</string>
+    <string name="publicar_fotos_reglas">JPG o PNG · máx. 5 MB c/u · de 1 a 5 fotos</string>
+    <string name="publicar_fotos_seleccionadas">Fotos seleccionadas</string>
+    <string name="publicar_foto_numero">Foto %1$d</string>
+    <string name="publicar_quitar_foto">Quitar foto %1$d</string>
+    <!-- 11 y 11b · Publicar anuncio, paso 4 (textos de Figma y sección 1.5) -->
+    <string name="publicar_p4_titulo">Ubicación y contacto</string>
+    <string name="publicar_p4_subtitulo">Ayuda a los compradores a encontrarte fácilmente</string>
+    <string name="publicar_campo_ciudad">Ciudad *</string>
+    <string name="publicar_campo_ciudad_ejemplo">Selecciona tu ciudad</string>
+    <string name="publicar_campo_correo">Email *</string>
+    <string name="publicar_campo_correo_ejemplo">tu@email.com</string>
+    <string name="publicar_campo_telefono">Teléfono (opcional)</string>
+    <string name="publicar_campo_telefono_ejemplo">(+57) 300 123 4567</string>
+    <string name="publicar_campo_telefono_ayuda">Facilita el contacto directo con compradores interesados</string>
+    <string name="publicar_boton_publicar">Publicar anuncio</string>
+    <string name="publicar_publicando">Publicando anuncio</string>
+
+    <!-- 12 · Confirmación (textos de la sección 1.5 y de Figma) -->
+    <string name="confirmacion_titulo">¡Anuncio publicado correctamente!</string>
+    <string name="confirmacion_texto">Tu publicación ya está disponible para otros usuarios.</string>
+    <string name="confirmacion_ver_anuncio">Ver anuncio</string>
+    <string name="confirmacion_volver_inicio">Volver al inicio</string>
+
     <string name="accion_mostrar_contrasena">Mostrar contraseña</string>
     <string name="accion_ocultar_contrasena">Ocultar contraseña</string>
 </resources>

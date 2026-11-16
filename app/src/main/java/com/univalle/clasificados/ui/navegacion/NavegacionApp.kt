@@ -23,6 +23,7 @@ import com.univalle.clasificados.ui.componentes.BarraInferior
 import com.univalle.clasificados.ui.componentes.BotonPublicar
 import com.univalle.clasificados.ui.pantallas.AjustesScreen
 import com.univalle.clasificados.ui.pantallas.BienvenidaScreen
+import com.univalle.clasificados.ui.pantallas.ConfirmacionScreen
 import com.univalle.clasificados.ui.pantallas.DetalleScreen
 import com.univalle.clasificados.ui.pantallas.InicioScreen
 import com.univalle.clasificados.ui.pantallas.InicioSesionScreen
@@ -31,7 +32,9 @@ import com.univalle.clasificados.ui.pantallas.TodasCategoriasScreen
 import com.univalle.clasificados.ui.pantallas.MisAnunciosScreen
 import com.univalle.clasificados.ui.pantallas.PublicarScreen
 import com.univalle.clasificados.ui.pantallas.RegistroScreen
+import com.univalle.clasificados.ui.pantallas.ResultadosBusquedaScreen
 import com.univalle.clasificados.viewmodel.EstadoSesion
+import com.univalle.clasificados.viewmodel.PublicarViewModel
 import com.univalle.clasificados.viewmodel.SesionViewModel
 
 /**
@@ -52,6 +55,9 @@ fun NavegacionApp(sesionViewModel: SesionViewModel = viewModel()) {
     val rutaActual = entradaActual?.destination?.route
     val estadoSesion by sesionViewModel.estado.collectAsStateWithLifecycle()
     val conBarra = rutaActual in Rutas.CON_BARRA
+
+    // Formulario de Publicar compartido por sus cuatro pasos y por toda la app mientras esté abierta.
+    val publicarViewModel: PublicarViewModel = viewModel()
 
     LaunchedEffect(estadoSesion, rutaActual) {
         aplicarReglasDeSesion(navController, estadoSesion, rutaActual)
@@ -111,7 +117,8 @@ fun NavegacionApp(sesionViewModel: SesionViewModel = viewModel()) {
                 Box(Modifier.padding(innerPadding)) {
                     InicioScreen(
                         alAbrirCategoria = { navController.navigate(Rutas.listado(it.id)) },
-                        alVerTodas = { navController.navigate(Rutas.TODAS_CATEGORIAS) }
+                        alVerTodas = { navController.navigate(Rutas.TODAS_CATEGORIAS) },
+                        alBuscar = { navController.navigate(Rutas.busqueda(it)) }
                     )
                 }
             }
@@ -120,6 +127,15 @@ fun NavegacionApp(sesionViewModel: SesionViewModel = viewModel()) {
                     TodasCategoriasScreen(
                         alAbrirCategoria = { navController.navigate(Rutas.listado(it.id)) },
                         alVolver = { navController.popBackStack() }
+                    )
+                }
+            }
+            // Pantalla 03b · Resultados de búsqueda desde Inicio (HU-15).
+            composable(Rutas.BUSQUEDA) {
+                Box(Modifier.padding(innerPadding)) {
+                    ResultadosBusquedaScreen(
+                        alVolver = { navController.popBackStack() },
+                        alAbrirAnuncio = { navController.navigate(Rutas.detalle(it.id)) }
                     )
                 }
             }
@@ -136,7 +152,36 @@ fun NavegacionApp(sesionViewModel: SesionViewModel = viewModel()) {
             composable(Rutas.DETALLE) {
                 DetalleScreen(alVolver = { navController.popBackStack() })
             }
-            composable(Rutas.PUBLICAR) { Box(Modifier.padding(innerPadding)) { PublicarScreen() } }
+            // El borrador vive en un ViewModel de la actividad: se conserva al salir de Publicar (HU-12).
+            composable(Rutas.PUBLICAR) {
+                Box(Modifier.padding(innerPadding)) {
+                    PublicarScreen(
+                        viewModel = publicarViewModel,
+                        alSalir = { navController.popBackStack() },
+                        // Confirmación reemplaza a Publicar: «atrás» ya no vuelve al formulario.
+                        alPublicar = { id ->
+                            navController.navigate(Rutas.confirmacion(id)) {
+                                popUpTo(Rutas.PUBLICAR) { inclusive = true }
+                            }
+                        }
+                    )
+                }
+            }
+            // Pantalla 12: «Ver anuncio» abre el detalle dejando solo Inicio detrás, así «atrás» desde
+            // el detalle lleva a Inicio (acordado con Oscar). «Volver al inicio» y «atrás» van a Inicio.
+            composable(Rutas.CONFIRMACION) { entrada ->
+                val anuncioId = entrada.arguments?.getString(Rutas.ARG_ANUNCIO).orEmpty()
+                Box(Modifier.padding(innerPadding)) {
+                    ConfirmacionScreen(
+                        alVerAnuncio = {
+                            navController.navigate(Rutas.detalle(anuncioId)) {
+                                popUpTo(Rutas.INICIO) { inclusive = false }
+                            }
+                        },
+                        alVolverInicio = { navController.popBackStack(Rutas.INICIO, inclusive = false) }
+                    )
+                }
+            }
             composable(Rutas.MIS_ANUNCIOS) { Box(Modifier.padding(innerPadding)) { MisAnunciosScreen() } }
             composable(Rutas.AJUSTES) { Box(Modifier.padding(innerPadding)) { AjustesScreen() } }
         }
