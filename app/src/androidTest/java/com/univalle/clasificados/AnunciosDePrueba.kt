@@ -102,6 +102,9 @@ object AnunciosDePrueba {
                 telefono = s.telefono,
                 fechaPublicacion = Timestamp(s.fecha?.let { formato.parse(it) as Date } ?: haceDosHoras)
             )
+            // Las reglas de HU-16 no dejan cambiar la fecha de un anuncio al editarlo (RN-12): el
+            // anuncio «hace dos horas» cambia de fecha en cada ejecución, así que se borra y se crea.
+            if (s.fecha == null) coleccion.document(s.id).delete().await()
             coleccion.document(s.id).set(anuncio).await()
         }
     }

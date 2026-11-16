@@ -1,0 +1,41 @@
+rules_version = '2';
+
+// Reglas de seguridad de Cloud Firestore de Clasificados
+// (HU-16 · Reglas de seguridad de los datos; RNF-15, RNF-16, RNF-17, RN-05, RN-06, RN-12).
+// Esta es la copia que se versiona; la que rige es la publicada en la consola de Firebase
+// (proyecto clasificados-d5227). Si se cambia una, se cambia la otra.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Anuncios: cualquier usuario con sesión los ve (RNF-15, RN-06).
+    match /anuncios/{anuncioId} {
+      allow read: if request.auth != null;
+
+      // Crear: solo a nombre propio (el autor es quien tiene la sesión, RN-05).
+      allow create: if request.auth != null
+        && request.resource.data.autorId == request.auth.uid;
+
+      // Editar: solo el autor (RNF-16), sin cambiar el autor (RN-05) ni la fecha de
+      // publicación (RN-12).
+      allow update: if request.auth != null
+        && resource.data.autorId == request.auth.uid
+        && request.resource.data.autorId == resource.data.autorId
+        && request.resource.data.fechaPublicacion == resource.data.fechaPublicacion;
+
+      // Borrar: solo el autor (RNF-16).
+      allow delete: if request.auth != null
+        && resource.data.autorId == request.auth.uid;
+    }
+
+    // Perfil de cada usuario (nombre y teléfono, nunca la contraseña, RNF-17):
+    // solo su dueño lo lee y lo escribe.
+    match /usuarios/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Todo lo demás (por ejemplo la colección «pruebas» de HU-02) queda cerrado.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
