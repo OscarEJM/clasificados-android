@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 
 /**
  * Estado de la pantalla 03b · Resultados de búsqueda.
- * @property texto lo buscado, sin espacios al principio ni al final.
+ * @property texto lo escrito en el buscador de la 03b; empieza con lo buscado en Inicio.
  * @property carga circulito, resultados, «No se encontraron anuncios» (RF-15) o sin conexión.
  */
 data class ResultadosBusquedaUiState(
@@ -39,7 +39,7 @@ class ResultadosBusquedaViewModel @JvmOverloads constructor(
 
     /** Estado interno que solo este ViewModel puede cambiar. */
     private val _estado = MutableStateFlow(
-        ResultadosBusquedaUiState(texto = estadoGuardado.get<String>(Rutas.ARG_TEXTO).orEmpty().trim())
+        ResultadosBusquedaUiState(texto = estadoGuardado.get<String>(Rutas.ARG_TEXTO).orEmpty())
     )
 
     /** Estado de solo lectura que la pantalla observa con collectAsStateWithLifecycle(). */
@@ -49,12 +49,20 @@ class ResultadosBusquedaViewModel @JvmOverloads constructor(
         buscar()
     }
 
-    /** Trae los anuncios y los filtra por título. Cualquier fallo se muestra como falta de conexión (RN-18). */
+    /** El usuario cambió el texto del buscador de la 03b; se busca de nuevo al tocar la lupa. */
+    fun alCambiarTexto(valor: String) = _estado.update { it.copy(texto = valor) }
+
+    /**
+     * Trae los anuncios y los filtra por título. Cualquier fallo se muestra como falta de conexión
+     * (RN-18). Con el buscador vacío o solo espacios no hace nada (aprobado por Oscar).
+     */
     fun buscar() {
+        val texto = _estado.value.texto
+        if (Busqueda.normalizar(texto).isEmpty()) return
         _estado.update { it.copy(carga = CargaAnuncios.Cargando) }
         viewModelScope.launch {
             val carga = try {
-                val encontrados = Busqueda.filtrar(repositorio.todosLosAnuncios(), _estado.value.texto)
+                val encontrados = Busqueda.filtrar(repositorio.todosLosAnuncios(), texto)
                 if (encontrados.isEmpty()) CargaAnuncios.Vacio else CargaAnuncios.ConResultados(encontrados)
             } catch (e: CancellationException) {
                 throw e

@@ -105,4 +105,50 @@ object AnunciosDePrueba {
             coleccion.document(s.id).set(anuncio).await()
         }
     }
+
+    // --- HU-15 · Buscar anuncios por título (aprobado por Oscar el 16/11/2026) ---
+
+    /** Palabra que solo aparece en la descripción de un anuncio de prueba, nunca en un título (criterio 3). */
+    const val PALABRA_SOLO_DESCRIPCION = "acuarela"
+
+    /** Títulos con «bici» en dos categorías distintas: Deportes y Vehículos (criterios 1 y 2). */
+    const val TITULO_BICI_DEPORTES = "Bicicleta de ruta talla M"
+    const val TITULO_BICI_VEHICULOS = "Bicicleta eléctrica de segunda"
+
+    /** Anuncio de HU-15 cuya descripción tiene [PALABRA_SOLO_DESCRIPCION] pero su título no. */
+    const val TITULO_PINTURA = "Clases de pintura para niños"
+
+    /**
+     * Crea o reescribe los 3 anuncios de prueba de HU-15 («prueba-hu15-01» a «03»). Se quedan en
+     * la base para que Oscar también pueda probar la búsqueda a mano. Ninguno está en Empleos,
+     * Vivienda ni Eventos, para no cambiar los conteos de las pruebas de HU-07.
+     */
+    suspend fun crearHu15(autorId: String, correo: String) {
+        val coleccion = FirebaseFirestore.getInstance().collection(AnunciosRepository.COLECCION_ANUNCIOS)
+        val formato = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.US).apply {
+            timeZone = java.util.TimeZone.getTimeZone("America/Bogota")
+        }
+        listOf(
+            Triple("prueba-hu15-01", Semilla("prueba-hu15-01", Categoria.DEPORTES, TITULO_BICI_DEPORTES, 1_200_000, "Cali", "2026-11-15T10:00:00", listOf(1)),
+                "Bicicleta de ruta en aluminio, cambios Shimano. Anuncio de prueba de HU-15."),
+            Triple("prueba-hu15-02", Semilla("prueba-hu15-02", Categoria.VEHICULOS, TITULO_BICI_VEHICULOS, 2_800_000, "Bogotá", "2026-11-15T09:00:00", listOf(2)),
+                "Bicicleta eléctrica con batería nueva y cargador. Anuncio de prueba de HU-15."),
+            Triple("prueba-hu15-03", Semilla("prueba-hu15-03", Categoria.EDUCACION, TITULO_PINTURA, 120_000, "Tuluá", "2026-11-15T08:00:00", listOf(3)),
+                "Aprenden dibujo y $PALABRA_SOLO_DESCRIPCION los sábados. Anuncio de prueba de HU-15.")
+        ).forEach { (id, s, descripcion) ->
+            val anuncio = Anuncio(
+                autorId = autorId,
+                categoria = s.categoria.id,
+                titulo = s.titulo,
+                tituloMinusculas = s.titulo.lowercase(),
+                descripcion = descripcion,
+                precio = s.precio,
+                fotos = s.fotos.map(::foto),
+                ciudad = s.ciudad,
+                correo = correo,
+                fechaPublicacion = Timestamp(formato.parse(s.fecha!!) as Date)
+            )
+            coleccion.document(id).set(anuncio).await()
+        }
+    }
 }
