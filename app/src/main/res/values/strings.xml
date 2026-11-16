@@ -93,6 +93,25 @@
     <string name="publicar_fotos_seleccionadas">Fotos seleccionadas</string>
     <string name="publicar_foto_numero">Foto %1$d</string>
     <string name="publicar_quitar_foto">Quitar foto %1$d</string>
+    <!-- 11 y 11b · Publicar anuncio, paso 4 (textos de Figma y sección 1.5) -->
+    <string name="publicar_p4_titulo">Ubicación y contacto</string>
+    <string name="publicar_p4_subtitulo">Ayuda a los compradores a encontrarte fácilmente</string>
+    <string name="publicar_campo_ciudad">Ciudad *</string>
+    <string name="publicar_campo_ciudad_ejemplo">Selecciona tu ciudad</string>
+    <string name="publicar_campo_correo">Email *</string>
+    <string name="publicar_campo_correo_ejemplo">tu@email.com</string>
+    <string name="publicar_campo_telefono">Teléfono (opcional)</string>
+    <string name="publicar_campo_telefono_ejemplo">(+57) 300 123 4567</string>
+    <string name="publicar_campo_telefono_ayuda">Facilita el contacto directo con compradores interesados</string>
+    <string name="publicar_boton_publicar">Publicar anuncio</string>
+    <string name="publicar_publicando">Publicando anuncio</string>
+
+    <!-- 12 · Confirmación (textos de la sección 1.5 y de Figma) -->
+    <string name="confirmacion_titulo">¡Anuncio publicado correctamente!</string>
+    <string name="confirmacion_texto">Tu publicación ya está disponible para otros usuarios.</string>
+    <string name="confirmacion_ver_anuncio">Ver anuncio</string>
+    <string name="confirmacion_volver_inicio">Volver al inicio</string>
+
     <string name="accion_mostrar_contrasena">Mostrar contraseña</string>
     <string name="accion_ocultar_contrasena">Ocultar contraseña</string>
 </resources>

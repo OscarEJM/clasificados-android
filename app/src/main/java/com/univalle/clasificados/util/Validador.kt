@@ -116,6 +116,27 @@ object Validador {
     fun validarCantidadFotos(cantidad: Int): String? =
         if (cantidad < 1) FOTOS_MINIMO else null
 
+    // --- Ubicación y contacto (HU-14 · Publicar anuncio: ubicación, contacto y confirmación; RF-25) ---
+
+    /** Mensajes exactos de la sección 1.5 para el paso 4. No cambiarlos sin autorización. */
+    const val CIUDAD_OBLIGATORIA = "Selecciona tu ciudad para que te encuentren"
+    const val CORREO_CONTACTO_OBLIGATORIO = "El email es obligatorio para recibir contactos"
+    const val CORREO_CONTACTO_INVALIDO = "Por favor ingresa un email válido"
+
+    /** RF-25 (a): hay que elegir una de las 10 ciudades. */
+    fun validarCiudad(ciudad: String?): String? =
+        if (ciudad.isNullOrBlank()) CIUDAD_OBLIGATORIA else null
+
+    /**
+     * RF-25 (b) y RN-11: el correo de contacto es obligatorio y tiene el formato
+     * usuario@dominio.ext (el mismo de Registro).
+     */
+    fun validarCorreoContacto(correo: String): String? = when {
+        correo.isBlank() -> CORREO_CONTACTO_OBLIGATORIO
+        !formatoCorreo.matches(correo.trim()) -> CORREO_CONTACTO_INVALIDO
+        else -> null
+    }
+
     /**
      * Deja en el campo de precio solo los dígitos y como máximo [MAXIMO_DIGITOS_PRECIO]: así el
      * campo solo acepta números enteros aunque se pegue otro texto (RF-23).

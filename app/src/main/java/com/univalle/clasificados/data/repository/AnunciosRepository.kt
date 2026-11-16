@@ -45,6 +45,25 @@ class AnunciosRepository(
             .await()
             .toObject(Anuncio::class.java)
 
+    /**
+     * Id nuevo para un anuncio, sin escribir nada todavía (HU-14). Se pide antes de subir las
+     * fotos porque su carpeta en Supabase lleva el id del anuncio (sección 1.8).
+     */
+    fun nuevoId(): String = db.collection(COLECCION_ANUNCIOS).document().id
+
+    /**
+     * Guarda un anuncio nuevo con el id [id] (HU-14 · RF-26). La fecha de publicación la pone el
+     * servidor de Firestore (RN-12), gracias a `@ServerTimestamp` en [Anuncio.fechaPublicacion].
+     *
+     * Se usa una transacción y no una escritura normal: sin internet, una escritura normal queda
+     * en espera y se enviaría más tarde (dejando un anuncio cuyas fotos ya se borraron); la
+     * transacción, en cambio, falla de una vez y el ViewModel muestra el mensaje de RN-18.
+     */
+    suspend fun crear(id: String, anuncio: Anuncio) {
+        val referencia = db.collection(COLECCION_ANUNCIOS).document(id)
+        db.runTransaction { transaccion -> transaccion.set(referencia, anuncio) }.await()
+    }
+
     // --- Funciones de prueba de conexión (HU-02). Escriben y leen en la colección «pruebas». ---
 
     /** Escribe un documento de prueba y devuelve su id. */

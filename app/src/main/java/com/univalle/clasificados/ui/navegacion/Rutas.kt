@@ -31,6 +31,12 @@ object Rutas {
     /** Ruta del detalle del anuncio con ese [anuncioId]. */
     fun detalle(anuncioId: String) = "detalle/$anuncioId"
 
+    /** Pantalla 12 · Confirmación del anuncio recién publicado (HU-14). Sin barra inferior, como en Figma. */
+    const val CONFIRMACION = "confirmacion/{$ARG_ANUNCIO}"
+
+    /** Ruta de Confirmación del anuncio con ese [anuncioId]. */
+    fun confirmacion(anuncioId: String) = "confirmacion/$anuncioId"
+
     /** Pantallas que se pueden ver sin sesión: 00, 01 y 02 (RF-09). */
     val PUBLICAS = setOf(BIENVENIDA, INICIO_SESION, REGISTRO)
 
