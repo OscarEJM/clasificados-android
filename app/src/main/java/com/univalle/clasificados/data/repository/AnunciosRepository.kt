@@ -33,6 +33,19 @@ class AnunciosRepository(
             .toObjects(Anuncio::class.java)
 
     /**
+     * Todos los anuncios de todas las categorías, del más reciente al más antiguo, para la
+     * búsqueda desde Inicio (HU-15 · RF-16). Firestore no busca «contiene», así que el ViewModel
+     * los filtra por título. Se piden al servidor por la misma razón que [anunciosDeCategoria].
+     * Ordenar por un solo campo no necesita índice compuesto.
+     */
+    suspend fun todosLosAnuncios(): List<Anuncio> =
+        db.collection(COLECCION_ANUNCIOS)
+            .orderBy(CAMPO_FECHA, Query.Direction.DESCENDING)
+            .get(Source.SERVER)
+            .await()
+            .toObjects(Anuncio::class.java)
+
+    /**
      * Un anuncio por su id, para la pantalla 07 · Detalle (HU-08 · RF-14). Se pide al servidor
      * por la misma razón que [anunciosDeCategoria]: sin internet debe dar error.
      *

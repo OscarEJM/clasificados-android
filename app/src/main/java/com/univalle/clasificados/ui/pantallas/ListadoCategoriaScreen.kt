@@ -43,7 +43,8 @@ const val TARJETA_ANUNCIO = "tarjeta_anuncio"
  * Pantalla 05 · Anuncios de categoría (HU-07 · Ver los anuncios de una categoría, RF-12, RF-15).
  *
  * Arriba: flecha atrás, nombre de la categoría y el ícono de filtros (se ve, pero los filtros
- * llegan en HU-17). Debajo: el buscador (se escribe, pero busca desde HU-15), «N anuncios
+ * llegan en HU-17). Debajo: el buscador, que filtra por título dentro de la categoría mientras
+ * se escribe (HU-15 · RF-17), «N anuncios
  * encontrados» y los anuncios en dos por renglón, del más reciente al más antiguo. Tocar una
  * tarjeta abre su detalle (HU-08).
  *

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,18 +30,21 @@ import com.univalle.clasificados.ui.theme.ClasificadosTheme
 /**
  * Buscador de Figma (componente «Buscador» de la pantalla 03): barra de 48 dp, gris
  * superficie-variante, esquinas de 24 dp, lupa de 20 dp y el texto de ejemplo.
- * En HU-06 solo guarda lo que se escribe; la búsqueda por título se conecta en HU-15 (RF-16).
+ * Busca por título (HU-15 · RF-16, RF-17): en Inicio al tocar la lupa del teclado ([alBuscar]) y en
+ * el listado de una categoría mientras se escribe.
  *
  * @param valor texto escrito.
  * @param alCambiar se llama con cada cambio del texto.
  * @param ejemplo texto gris que se ve mientras el buscador está vacío.
+ * @param alBuscar se llama al tocar la lupa del teclado; `null` si no hace falta (HU-15).
  */
 @Composable
 fun Buscador(
     valor: String,
     alCambiar: (String) -> Unit,
     ejemplo: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    alBuscar: (() -> Unit)? = null
 ) {
     val secundario = ClasificadosTheme.colores.textoSecundario
     BasicTextField(
@@ -51,6 +55,7 @@ fun Buscador(
         textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp),
         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        keyboardActions = KeyboardActions(onSearch = { alBuscar?.invoke() }),
         decorationBox = { campo ->
             Row(
                 modifier = Modifier
