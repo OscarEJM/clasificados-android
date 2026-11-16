@@ -48,13 +48,15 @@ private val FormaOpcion = RoundedCornerShape(12.dp)
 
 /**
  * Formulario «Publicar anuncio» de cuatro pasos (HU-12 · Publicar anuncio: pasos de categoría y
- * detalles; RF-21, RF-22, RF-23), según las pantallas 08, 09 y 09b de Figma. No lleva la barra
+ * detalles; RF-21, RF-22, RF-23) y HU-13 (Publicar anuncio: agregar fotos; RF-24), según las
+ * pantallas 08, 09, 09b, 10 y 10b de Figma. No lleva la barra
  * inferior: arriba tiene la flecha atrás y el título, luego el indicador de pasos, el contenido
  * del paso y abajo los botones.
  *
  * - Paso 1 · Categoría: las 13 categorías de dos en dos; la elegida queda resaltada.
  * - Paso 2 · Detalles: título con el contador vivo, descripción y precio (solo números).
- * - Paso 3: marcador con el indicador y «Volver» hasta HU-13 (acordado con Oscar).
+ * - Paso 3 · Fotos: zona punteada que abre la galería, contador «N / 5» y las miniaturas (HU-13).
+ * - Paso 4: marcador con el indicador y «Volver» hasta HU-14 (acordado con Oscar).
  *
  * La flecha atrás y el «atrás» del teléfono regresan al paso anterior; en el paso 1 cierran
  * Publicar. El borrador vive en [PublicarViewModel], que comparte toda la app.
@@ -80,7 +82,8 @@ fun PublicarScreen(viewModel: PublicarViewModel, alSalir: () -> Unit) {
             when (estado.paso) {
                 1 -> PasoCategoria(estado, viewModel)
                 2 -> PasoDetalles(estado, viewModel)
-                else -> Unit // Marcador del paso 3 (fotos) hasta HU-13.
+                3 -> PasoFotos(estado, viewModel)
+                else -> Unit // Marcador del paso 4 (ubicación y contacto) hasta HU-14.
             }
         }
         // Botones de Figma: 12 dp arriba y 32 dp abajo; en el paso 1 solo «Continuar».
@@ -95,7 +98,7 @@ fun PublicarScreen(viewModel: PublicarViewModel, alSalir: () -> Unit) {
                     modifier = Modifier.weight(1f)
                 )
             }
-            if (estado.paso < 3) {
+            if (estado.paso < 4) {
                 BotonPrincipal(
                     texto = stringResource(R.string.publicar_continuar),
                     cargando = false,
@@ -109,7 +112,7 @@ fun PublicarScreen(viewModel: PublicarViewModel, alSalir: () -> Unit) {
 
 /** Título y subtítulo de cada paso (20 sp y 14 sp, Figma). */
 @Composable
-private fun TituloPaso(titulo: String, subtitulo: String) {
+internal fun TituloPaso(titulo: String, subtitulo: String) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(titulo, color = MaterialTheme.colorScheme.onSurface, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
         Text(subtitulo, color = ClasificadosTheme.colores.textoSecundario, fontSize = 14.sp)

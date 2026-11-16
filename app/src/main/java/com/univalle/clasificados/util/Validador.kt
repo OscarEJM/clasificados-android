@@ -88,6 +88,34 @@ object Validador {
             PRECIO_OBLIGATORIO
         }
 
+    // --- Fotos del anuncio (HU-13 · Publicar anuncio: agregar fotos; RF-24, RNF-09, RN-10) ---
+
+    /** Mensajes exactos de la sección 1.5 para el paso 3. No cambiarlos sin autorización. */
+    const val FOTOS_MINIMO = "Agrega al menos 1 foto"
+    const val FOTOS_MAXIMO = "Máximo 5 fotos"
+    const val FOTO_INVALIDA = "Solo se permiten imágenes JPG o PNG de máximo 5 MB"
+
+    /** Máximo de fotos por anuncio (RN-10). */
+    const val MAXIMO_FOTOS = 5
+
+    /** Tamaño máximo de cada foto: 5 MB (RN-10). */
+    const val MAXIMO_BYTES_FOTO = 5L * 1024 * 1024
+
+    /** Formatos aceptados: JPG y PNG (RN-10). */
+    private val tiposFoto = setOf("image/jpeg", "image/png")
+
+    /**
+     * RF-24: una foto es válida si es JPG o PNG y pesa como máximo 5 MB.
+     * @param tipo tipo del archivo (por ejemplo «image/jpeg»); `null` si no se pudo saber.
+     * @param tamanoBytes tamaño del archivo; `null` si no se pudo saber (se rechaza).
+     */
+    fun esFotoValida(tipo: String?, tamanoBytes: Long?): Boolean =
+        tipo?.lowercase() in tiposFoto && tamanoBytes != null && tamanoBytes in 1..MAXIMO_BYTES_FOTO
+
+    /** RF-24: el anuncio necesita al menos una foto para continuar. */
+    fun validarCantidadFotos(cantidad: Int): String? =
+        if (cantidad < 1) FOTOS_MINIMO else null
+
     /**
      * Deja en el campo de precio solo los dígitos y como máximo [MAXIMO_DIGITOS_PRECIO]: así el
      * campo solo acepta números enteros aunque se pegue otro texto (RF-23).
